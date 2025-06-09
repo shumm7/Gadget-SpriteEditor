@@ -1,0 +1,26 @@
+{
+    "name": "gadget-sprite-editor",
+    "version": "1.0.0",
+    "main": "index.js",
+    "scripts": {
+        "build": "tsc && vite build",
+        "dev": "vite",
+        "preview": "vite preview"
+    },
+    "author": "shumm7",
+    "license": "MIT",
+    "description": "",
+    "devDependencies": {
+        "@types/core-js": "^2.5.8",
+        "@types/jquery": "^3.5.32",
+        "@types/node": "^22.15.29",
+        "@types/oojs-ui": "^0.49.4",
+        "types-mediawiki": "^1.10.1",
+        "typescript": "^5.8.3",
+        "vite": "^6.3.5",
+        "vite-tsconfig-paths": "^5.1.4"
+    },
+    "dependencies": {
+        "core-js": "^3.42.0"
+    }
+}

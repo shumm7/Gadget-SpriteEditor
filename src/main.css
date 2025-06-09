@@ -1,0 +1,48 @@
+/* General Component */
+.mjw-sprite-editor--component-sublabel {
+    color: gray;
+    font-size: 80%;
+}
+
+/* Collapsible Component */
+.mjw-sprite-editor--component-collapsible--label {
+    cursor: pointer;
+}
+.mjw-sprite-editor--component-collapsible--icon {
+    margin-right: 0.5rem;
+}
+
+/* Canvas Component */
+.mjw-sprite-editor--component-canvas--container {
+    min-height: 100px;
+    height: 300px;
+    max-height: 300px;
+    min-width: 100px;
+}
+.mjw-sprite-editor--component-canvas {
+    image-rendering: pixelated;
+    width: 100%;
+}
+
+/* Settings */
+.mjw-sprite-editor--component-label-field--sublabel {
+    white-space: nowrap;
+    text-wrap: nowrap;
+}
+.mjw-sprite-editor--component-label-field--sublabel:before {
+    content: "（";
+    margin-right: 0.2em;
+}
+.mjw-sprite-editor--component-label-field--sublabel:after {
+    content: "）";
+}
+.mjw-sprite-editor--component-sprite-settings--select .oo-ui-radioSelectWidget {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.5em;
+    padding: 4px;
+}
+.mjw-sprite-editor--component-sprite-settings--select .oo-ui-radioOptionWidget:first-child {
+    padding: 4px 0;
+}
