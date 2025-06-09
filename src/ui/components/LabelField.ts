@@ -86,7 +86,7 @@ export namespace LabelField {
     }
 
     export class Text extends Prototype {
-        private field: OO.ui.TextInputWidget
+        field: OO.ui.TextInputWidget
 
         constructor(config?: TextConfig) {
             if (!config) config = {}
@@ -149,38 +149,6 @@ export namespace LabelField {
             this.field.setValue(value)
         }
 
-        // events
-        on(
-            event: "change" | "disable" | "enter",
-            method: (this: null) => void,
-            args?: [] | undefined,
-            context?: null | undefined
-        ) {
-            if (event === "change") {
-                this.field.on("change", method, args, context)
-            } else if (event === "disable") {
-                this.field.on("disable", method, args, context)
-            } else if (event === "enter") {
-                this.field.on("enter", method, args, context)
-            }
-        }
-        off(
-            event: "change" | "disable" | "enter",
-            method: (this: null) => void,
-            context?: null | undefined
-        ) {
-            if (event === "change") {
-                this.field.off("change", method, context)
-            } else if (event === "disable") {
-                this.field.off("disable", method, context)
-            } else if (event === "enter") {
-                this.field.off("enter", method, context)
-            }
-        }
-        change(parameters?: any[] | JQuery.PlainObject | string | number | boolean) {
-            this.field.$element.trigger("change", parameters)
-        }
-
         // methods
         async isValid() {
             return await this.field.getValidity()
@@ -202,7 +170,7 @@ export namespace LabelField {
     }
 
     export class Numeric extends Prototype {
-        private field: OO.ui.TextInputWidget
+        field: OO.ui.TextInputWidget
 
         constructor(config?: NumericConfig) {
             if (!config) config = {}
@@ -283,38 +251,6 @@ export namespace LabelField {
         set value(value: number) {
             this.field.setValue(String(value))
         }
-
-        // events
-        on(
-            event: "change" | "disable" | "enter",
-            method: (this: null) => void,
-            args?: [] | undefined,
-            context?: null | undefined
-        ) {
-            if (event === "change") {
-                this.field.on("change", method, args, context)
-            } else if (event === "disable") {
-                this.field.on("disable", method, args, context)
-            } else if (event === "enter") {
-                this.field.on("enter", method, args, context)
-            }
-        }
-        off(
-            event: "change" | "disable" | "enter",
-            method: (this: null) => void,
-            context?: null | undefined
-        ) {
-            if (event === "change") {
-                this.field.off("change", method, context)
-            } else if (event === "disable") {
-                this.field.off("disable", method, context)
-            } else if (event === "enter") {
-                this.field.off("enter", method, context)
-            }
-        }
-        change(parameters?: any[] | JQuery.PlainObject | string | number | boolean) {
-            this.field.$element.trigger("change", parameters)
-        }
     }
 
     export interface ToggleConfig extends ConfigPrototype {
@@ -322,7 +258,7 @@ export namespace LabelField {
     }
 
     export class Toggle extends Prototype {
-        private field: OO.ui.ToggleSwitchWidget
+        field: OO.ui.ToggleSwitchWidget
 
         constructor(config?: ToggleConfig) {
             if (!config) config = {}
@@ -374,38 +310,6 @@ export namespace LabelField {
         set value(value: boolean) {
             this.field.setValue(value)
         }
-
-        // events
-        on(
-            event: "change" | "disable" | "toggle",
-            method: (this: null) => void,
-            args?: [] | undefined,
-            context?: null | undefined
-        ) {
-            if (event === "change") {
-                this.field.on("change", method, args, context)
-            } else if (event === "disable") {
-                this.field.on("disable", method, args, context)
-            } else if (event === "toggle") {
-                this.field.on("toggle", method, args, context)
-            }
-        }
-        off(
-            event: "change" | "disable" | "toggle",
-            method: (this: null) => void,
-            context?: null | undefined
-        ) {
-            if (event === "change") {
-                this.field.off("change", method, context)
-            } else if (event === "disable") {
-                this.field.off("disable", method, context)
-            } else if (event === "toggle") {
-                this.field.off("toggle", method, context)
-            }
-        }
-        change(parameters?: any[] | JQuery.PlainObject | string | number | boolean) {
-            this.field.$element.trigger("change", parameters)
-        }
     }
 
     export interface CheckboxConfig extends ConfigPrototype {
@@ -413,7 +317,7 @@ export namespace LabelField {
     }
 
     export class Checkbox extends Prototype {
-        private field: OO.ui.CheckboxInputWidget
+        field: OO.ui.CheckboxInputWidget
 
         constructor(config?: CheckboxConfig) {
             if (!config) config = {}
@@ -464,38 +368,6 @@ export namespace LabelField {
         }
         set value(value: boolean) {
             this.field.setSelected(value)
-        }
-
-        // events
-        on(
-            event: "change" | "disable" | "toggle",
-            method: (this: null) => void,
-            args?: [] | undefined,
-            context?: null | undefined
-        ) {
-            if (event === "change") {
-                this.field.on("change", method, args, context)
-            } else if (event === "disable") {
-                this.field.on("disable", method, args, context)
-            } else if (event === "toggle") {
-                this.field.on("toggle", method, args, context)
-            }
-        }
-        off(
-            event: "change" | "disable" | "toggle",
-            method: (this: null) => void,
-            context?: null | undefined
-        ) {
-            if (event === "change") {
-                this.field.off("change", method, context)
-            } else if (event === "disable") {
-                this.field.off("disable", method, context)
-            } else if (event === "toggle") {
-                this.field.off("toggle", method, context)
-            }
-        }
-        change(parameters?: any[] | JQuery.PlainObject | string | number | boolean) {
-            this.field.$element.trigger("change", parameters)
         }
     }
 }

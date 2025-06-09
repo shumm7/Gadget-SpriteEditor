@@ -58,10 +58,10 @@ export class SpriteEditor {
         body.append(container)
 
         // load content
-        this.loadContent(title)
+        this.loadData(title)
     }
 
-    private loadContent(title: string) {
+    private loadData(title: string) {
         const t = getTitle(this.title)
         const $this = this
         if (t.getNamespaceId() === 8 && t.getExtension() === "json") {
@@ -99,27 +99,26 @@ export class SpriteEditor {
         }
     }
 
-    pageIds() {
+    private pageIds() {
         let containerIds = new VerticalTab.LayoutItem("ids", {
             label: Message.get("editor-ids-title"),
         })
         containerIds.addItems([this.canvas.layout])
         return containerIds
     }
-    pageSections() {
+    private pageSections() {
         return new VerticalTab.LayoutItem("sections", {
             label: Message.get("editor-sections-title"),
         })
     }
-
-    pageSettings() {
+    private pageSettings() {
         let containerSettings = new VerticalTab.LayoutItem("settings", {
             label: Message.get("editor-settings-title"),
         })
         containerSettings.addItems([this.settings.panel])
         return containerSettings
     }
-    pageExport() {
+    private pageExport() {
         return new VerticalTab.LayoutItem("export", {
             label: Message.get("editor-export-title"),
         })
