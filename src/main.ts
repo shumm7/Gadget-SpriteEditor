@@ -2,8 +2,6 @@ import { init as specialPageInit } from "./editor/_main"
 import { initHooks } from "./utils/hooks"
 import { CONSTANT, Message, setAllMessages } from "./utils/message"
 
-let debug = true
-
 mw.hook("wikipage.content").add(function () {
     initHooks()
     setAllMessages().then(() => {

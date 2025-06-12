@@ -22,6 +22,7 @@ export const HOOKS = {
     selectedCanvas: "mjw.spriteeditor.selected.canvas",
 }
 
+/** Initialize hooks */
 export function initHooks() {
     // "mjw.spriteeditor.loaded": HOOKS.loadedData
     mw.hook(HOOKS.loadedJSONData).add((data, flag) => {

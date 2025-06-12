@@ -1,4 +1,7 @@
-export function getSearchParams() {
+/**
+ * Get search params object from `window.location`.
+ */
+export function getSearchParams(): URLSearchParams {
     return new URLSearchParams(window.location.search)
 }
 

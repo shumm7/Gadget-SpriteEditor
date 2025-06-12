@@ -2,17 +2,23 @@ import lang_ja from "@/lang/ja"
 import lang_en from "@/lang/en"
 
 export const CONSTANT = {
+    /** Default content language. */
     defaultLanguage: "en",
+    /** API endpoint path. */
     path: mw.config.get("wgScriptPath") + "/index.php?",
+    /** Canonical special page title (without namespace). */
     specialPage: "SpriteEditor",
+    /** Prefix for system messages. */
     messagePrefix: "sprite-editor-",
 }
 
+/** Localized system messages. */
 const Messages: Record<string, Record<string, string>> = {
     ja: lang_ja,
     en: lang_en,
 }
 
+/** MediaWiki built-in system messages to load. */
 const SystemMessages = ["edit"]
 
 export function setAllMessages(): JQuery.Promise<boolean> {

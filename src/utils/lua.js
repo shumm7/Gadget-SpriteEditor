@@ -1,5 +1,5 @@
 /**
- Lua to JSON conversion
+ Convert Lua object to JSON object.
  @author pneuma01
  @link https://codepen.io/pneuma01/pen/XWpxPZX
  */
