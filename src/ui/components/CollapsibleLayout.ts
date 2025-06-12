@@ -7,7 +7,7 @@ interface CollapsibleLayoutConfig {
     classes?: string[]
 }
 
-export class CollapsibleLayout extends OO.ui.FieldLayout<OO.ui.Widget> {
+class CollapsibleLayout extends OO.ui.FieldLayout<OO.ui.Widget> {
     content: OO.ui.Widget
     label: OO.ui.LabelWidget
     private $content: JQuery<Element>
@@ -122,3 +122,5 @@ export class CollapsibleLayout extends OO.ui.FieldLayout<OO.ui.Widget> {
         return this.expandedState
     }
 }
+
+export default CollapsibleLayout

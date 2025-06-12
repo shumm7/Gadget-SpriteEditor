@@ -1,7 +1,9 @@
 import { Message } from "@/utils/message"
-import { LabelField } from "../components/LabelField"
-import { ComboBoxAction } from "../components/ComboBoxAction"
 import { SettingsValue } from "@/data/settings"
+import ComboBoxActionLayout from "../components/ComboBoxActionLayout"
+import TextInputLayout from "../components/TextInputLayout"
+import NumberInputLayout from "../components/NumberInputLayout"
+import CheckboxInputLayout from "../components/CheckboxInputLayout"
 
 export namespace SpriteSettings {
     const settings = [
@@ -25,12 +27,12 @@ export namespace SpriteSettings {
         panel: OO.ui.Layout
         stack: OO.ui.StackLayout
         private select: OO.ui.RadioSelectInputWidget
-        private input: ComboBoxAction.Layout
+        private input: ComboBoxActionLayout
 
         private _data: Record<string, any>
         private items: Record<
             string,
-            { index: number; element: LabelField.Text | LabelField.Numeric | LabelField.Checkbox }
+            { index: number; element: TextInputLayout | NumberInputLayout | CheckboxInputLayout }
         > = {}
 
         constructor(data: Record<string, any>, config?: LayoutConfig) {
@@ -66,7 +68,7 @@ export namespace SpriteSettings {
             })
 
             // input
-            this.input = new ComboBoxAction.Layout({
+            this.input = new ComboBoxActionLayout({
                 buttonLabel: Message.get("editor-settings-add"),
                 classes: ["mjw-sprite-editor--component-sprite-settings--input"],
             })
@@ -80,7 +82,7 @@ export namespace SpriteSettings {
 
             // panel
             this.panel = new OO.ui.Layout({
-                content: [this.stack, this.input.layout, this.select],
+                content: [this.stack, this.input, this.select],
                 classes: ["mjw-sprite-editor--component-sprite-settings"],
             })
 
@@ -109,16 +111,13 @@ export namespace SpriteSettings {
         private setFieldValue(key: string, value: any) {
             if (key in this.items) {
                 let item = this.items[key]
-                if (typeof value === "string" && item.element instanceof LabelField.Text) {
+                if (typeof value === "string" && item.element instanceof TextInputLayout) {
                     item.element.value = value
-                } else if (
-                    typeof value === "number" &&
-                    item.element instanceof LabelField.Numeric
-                ) {
+                } else if (typeof value === "number" && item.element instanceof NumberInputLayout) {
                     item.element.value = value
                 } else if (
                     typeof value === "boolean" &&
-                    item.element instanceof LabelField.Checkbox
+                    item.element instanceof CheckboxInputLayout
                 ) {
                     item.element.value = value
                 }
@@ -128,11 +127,11 @@ export namespace SpriteSettings {
         private getFieldValue(key: string): string | number | boolean | undefined {
             if (key in this.items) {
                 let item = this.items[key]
-                if (item.element instanceof LabelField.Text) {
+                if (item.element instanceof TextInputLayout) {
                     return item.element.value
-                } else if (item.element instanceof LabelField.Numeric) {
+                } else if (item.element instanceof NumberInputLayout) {
                     return item.element.value
-                } else if (item.element instanceof LabelField.Checkbox) {
+                } else if (item.element instanceof CheckboxInputLayout) {
                     return item.element.value
                 }
             }
@@ -161,21 +160,21 @@ export namespace SpriteSettings {
         private pushField(key: string, value: any, index?: number) {
             if (typeof value === "string") {
                 var t = this.getTextField(key, value)
-                this.stack.addItems([t.layout], index)
+                this.stack.addItems([t], index)
                 this.items[key] = {
                     index: Object.keys(this.items).length,
                     element: t,
                 }
             } else if (typeof value === "number") {
                 var n = this.getNumberField(key, value)
-                this.stack.addItems([n.layout], index)
+                this.stack.addItems([n], index)
                 this.items[key] = {
                     index: Object.keys(this.items).length,
                     element: n,
                 }
             } else if (typeof value === "boolean") {
                 var c = this.getCheckbox(key, value)
-                this.stack.addItems([c.layout], index)
+                this.stack.addItems([c], index)
                 this.items[key] = {
                     index: Object.keys(this.items).length,
                     element: c,
@@ -243,14 +242,14 @@ export namespace SpriteSettings {
                 value = SettingsValue[value].default
             if (typeof value !== "string") value = ""
 
-            let field = new LabelField.Text({
+            let field = new TextInputLayout({
                 label: this.getFieldLabel(key),
                 help: this.getFieldDescription(key),
                 value: value,
                 key: key,
                 sublabel: key,
             })
-            field.field.on("change", (value) => {
+            field.input.on("change", (value) => {
                 let d = $this.checkSpriteData()
                 d.settings[key] = value
                 this.data = d
@@ -264,7 +263,7 @@ export namespace SpriteSettings {
                 value = SettingsValue[value].default
             if (typeof value !== "number") value = 0
 
-            let field = new LabelField.Numeric({
+            let field = new NumberInputLayout({
                 label: this.getFieldLabel(key),
                 help: this.getFieldDescription(key),
                 value: value,
@@ -273,8 +272,8 @@ export namespace SpriteSettings {
                 min: 0,
             })
 
-            field.field.$input.on("change", (e) => {
-                let v = Number(field.field.getValue())
+            field.input.$input.on("change", (e) => {
+                let v = Number(field.input.getValue())
                 let d = $this.checkSpriteData()
                 if (isFinite(v)) {
                     d.settings[key] = v
@@ -295,7 +294,7 @@ export namespace SpriteSettings {
                 value = SettingsValue[value].default
             if (typeof value !== "boolean") value = false
 
-            let field = new LabelField.Checkbox({
+            let field = new CheckboxInputLayout({
                 label: this.getFieldLabel(key),
                 help: this.getFieldDescription(key),
                 value: value,
@@ -303,7 +302,7 @@ export namespace SpriteSettings {
                 sublabel: key,
             })
 
-            field.field.on("change", (value) => {
+            field.input.on("change", (value) => {
                 if (typeof value === "boolean") {
                     let d = $this.checkSpriteData()
                     d.settings[key] = value

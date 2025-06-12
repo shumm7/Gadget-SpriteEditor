@@ -2,9 +2,9 @@ import { loadJson, loadLua } from "@/utils/io"
 import { CONSTANT, Message } from "@/utils/message"
 import { getTitle, setSearchParams } from "@/utils/page"
 import { HOOKS } from "@/utils/hooks"
-import { VerticalTab } from "@/ui/components/VerticalTabLayout"
+import VerticalTabLayout from "@/ui/components/VerticalTabLayout"
+import VerticalTabLayoutItem from "@/ui/components/VerticalTabLayoutItem"
 import { SpriteCanvas } from "@/ui/editor/SpriteCanvas"
-import { LabelField } from "@/ui/components/LabelField"
 import { SpriteSettings } from "@/ui/editor/SpriteSettings"
 
 export class SpriteEditor {
@@ -14,8 +14,8 @@ export class SpriteEditor {
     private image: HTMLImageElement
 
     private $body: JQuery<HTMLElement>
-    private panel: VerticalTab.Layout
-    private pages: Record<string, VerticalTab.LayoutItem> = {}
+    private panel: VerticalTabLayout
+    private pages: Record<string, VerticalTabLayoutItem> = {}
 
     // ids
     private canvas: SpriteCanvas.Layout
@@ -51,7 +51,7 @@ export class SpriteEditor {
         this.pages.settings = this.pageSettings()
         this.pages.export = this.pageExport()
 
-        this.panel = new VerticalTab.Layout({
+        this.panel = new VerticalTabLayout({
             items: [this.pages.ids, this.pages.sections, this.pages.settings, this.pages.export],
         })
         container.append(this.panel.$element)
@@ -100,26 +100,26 @@ export class SpriteEditor {
     }
 
     private pageIds() {
-        let containerIds = new VerticalTab.LayoutItem("ids", {
+        let containerIds = new VerticalTabLayoutItem("ids", {
             label: Message.get("editor-ids-title"),
         })
         containerIds.addItems([this.canvas.layout])
         return containerIds
     }
     private pageSections() {
-        return new VerticalTab.LayoutItem("sections", {
+        return new VerticalTabLayoutItem("sections", {
             label: Message.get("editor-sections-title"),
         })
     }
     private pageSettings() {
-        let containerSettings = new VerticalTab.LayoutItem("settings", {
+        let containerSettings = new VerticalTabLayoutItem("settings", {
             label: Message.get("editor-settings-title"),
         })
         containerSettings.addItems([this.settings.panel])
         return containerSettings
     }
     private pageExport() {
-        return new VerticalTab.LayoutItem("export", {
+        return new VerticalTabLayoutItem("export", {
             label: Message.get("editor-export-title"),
         })
     }
