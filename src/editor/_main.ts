@@ -2,8 +2,8 @@ import { pageInfo } from "@/utils/io"
 import { getBody, setTitle } from "../utils/html"
 import { Message } from "../utils/message"
 import { getSearchParams, getTitle } from "../utils/page"
-import { SpriteIntroduction } from "./selector"
-import { SpriteEditor } from "./editor"
+import SpriteIntroduction from "../ui/SpriteSelector"
+import SpriteEditor from "../ui/SpriteEditor"
 
 export function init() {
     const params = getSearchParams()

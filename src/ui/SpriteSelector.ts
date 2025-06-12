@@ -1,12 +1,12 @@
 import { pageExsits } from "@/utils/io"
 import { Message } from "../utils/message"
 import { setSearchParams } from "@/utils/page"
-import { SpriteSelector } from "@/ui/selector/SpriteSelector"
+import SpriteSelector from "@/ui/selector/SpriteSelector"
 
-export class SpriteIntroduction {
+export default class SpriteIntroduction {
     private title: string = ""
     private $body: JQuery<HTMLElement>
-    private selector?: SpriteSelector.Layout
+    private selector?: SpriteSelector
 
     constructor(
         body: JQuery<HTMLElement>,
@@ -24,14 +24,14 @@ export class SpriteIntroduction {
         const text = $("<p>").text(Message.get("description"))
         this.$body.append(text)
 
-        this.selector = new SpriteSelector.Layout({
+        this.selector = new SpriteSelector({
             label: Message.get("selector-label"),
             value: this.title,
             buttonLabel: Message.getRaw("edit"),
             description: Message.get("selector-instructions"),
             error: error,
         })
-        this.selector.on("submit", () => {
+        this.selector.form.on("submit", () => {
             const inputValue = $this.value
             $this.title = inputValue
             setSearchParams("data", $this.title)

@@ -4,10 +4,10 @@ import { getTitle, setSearchParams } from "@/utils/page"
 import { HOOKS } from "@/utils/hooks"
 import VerticalTabLayout from "@/ui/components/VerticalTabLayout"
 import VerticalTabLayoutItem from "@/ui/components/VerticalTabLayoutItem"
-import { SpriteCanvas } from "@/ui/editor/SpriteCanvas"
-import { SpriteSettings } from "@/ui/editor/SpriteSettings"
+import SpriteCanvas from "@/ui/editor/SpriteCanvas"
+import SpriteSettings from "@/ui/editor/SpriteSettings"
 
-export class SpriteEditor {
+export default class SpriteEditor {
     private title: string = ""
     private exists: boolean | undefined
     private _data: Record<string, any> = {}
@@ -18,10 +18,10 @@ export class SpriteEditor {
     private pages: Record<string, VerticalTabLayoutItem> = {}
 
     // ids
-    private canvas: SpriteCanvas.Layout
+    private canvas: SpriteCanvas
 
     // settings
-    private settings: SpriteSettings.Layout
+    private settings: SpriteSettings
 
     constructor(body: JQuery<HTMLElement>, title: string, exists: boolean | undefined) {
         if (!(title.length > 0 && body)) setSearchParams("data")
@@ -40,10 +40,10 @@ export class SpriteEditor {
         const container = $(`<div class="mjw-sprite-editor--container" id="mjw-sprite-editor"/>`)
 
         // ids
-        this.canvas = new SpriteCanvas.Layout(this.image, this.data, {})
+        this.canvas = new SpriteCanvas(this.image, this.data, {})
 
         // settings
-        this.settings = new SpriteSettings.Layout(this.data)
+        this.settings = new SpriteSettings(this.data)
 
         // pages
         this.pages.ids = this.pageIds()
@@ -103,7 +103,7 @@ export class SpriteEditor {
         let containerIds = new VerticalTabLayoutItem("ids", {
             label: Message.get("editor-ids-title"),
         })
-        containerIds.addItems([this.canvas.layout])
+        containerIds.addItems([this.canvas])
         return containerIds
     }
     private pageSections() {
@@ -115,7 +115,7 @@ export class SpriteEditor {
         let containerSettings = new VerticalTabLayoutItem("settings", {
             label: Message.get("editor-settings-title"),
         })
-        containerSettings.addItems([this.settings.panel])
+        containerSettings.addItems([this.settings])
         return containerSettings
     }
     private pageExport() {
