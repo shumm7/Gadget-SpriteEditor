@@ -114,13 +114,6 @@ export default class IntroductionFormLayout extends OO.ui.PanelLayout {
     }
 
     // Getter / Setter Parameters
-    set id(value: string) {
-        this.setElementId(value)
-    }
-    get id() {
-        return this.getElementId()
-    }
-
     set value(value: string) {
         this.input.setValue(value)
     }

@@ -26,6 +26,7 @@ export default class SpecialPageContent {
 
     expandElement() {
         const target = this.targetPageName
+        const $this = this
 
         if (target && target.length > 0) {
             pageInfo(target).then((page) => {
@@ -40,7 +41,7 @@ export default class SpecialPageContent {
                 if (nsId === 8 /* MediaWiki */) {
                     if (ext === "json") {
                         if ((contentModel === "json" && exist) || !exist) {
-                            this.showEditor(target, exist)
+                            $this.showEditor(target, exist)
                             return
                         } else {
                             error = Message.getObj(
@@ -67,7 +68,7 @@ export default class SpecialPageContent {
                     }
                 } else if (nsId === 828) {
                     if (!exist || (exist && contentModel === "Scribunto")) {
-                        this.showEditor(target, exist)
+                        $this.showEditor(target, exist)
                         return
                     } else {
                         error = Message.getObj(
@@ -80,10 +81,10 @@ export default class SpecialPageContent {
                 } else {
                     error = Message.getObj("selector-namespace-error", target).parseDom()
                 }
-                this.showIntroductionForm(target, error)
+                $this.showIntroductionForm(target, error)
             })
         } else {
-            this.showIntroductionForm(target)
+            $this.showIntroductionForm(target)
         }
     }
 

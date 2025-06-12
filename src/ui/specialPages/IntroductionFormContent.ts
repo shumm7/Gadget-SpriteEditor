@@ -3,7 +3,7 @@ import { setSearchParams } from "@/utils/page"
 import IntroductionFormLayout from "@/ui/specialPages/introduction/IntroductionFormLayout"
 
 export default class SpriteIntroduction extends OO.ui.PanelLayout {
-    private title: string
+    private pageTitle: string
     private $body: JQuery<HTMLElement>
     private selector: IntroductionFormLayout
     private label: OO.ui.LabelWidget
@@ -42,7 +42,7 @@ export default class SpriteIntroduction extends OO.ui.PanelLayout {
 
         // arguments
         this.$body = body
-        this.title = title
+        this.pageTitle = title
         this.label = label
         this.selector = selector
 
@@ -50,8 +50,8 @@ export default class SpriteIntroduction extends OO.ui.PanelLayout {
         const $this = this
         this.selector.form.on("submit", () => {
             const inputValue = $this.value
-            $this.title = inputValue
-            setSearchParams("data", $this.title)
+            $this.pageTitle = inputValue
+            setSearchParams("data", $this.pageTitle)
         })
 
         // initialize
@@ -65,4 +65,5 @@ export default class SpriteIntroduction extends OO.ui.PanelLayout {
         }
         return ""
     }
+    set value(value: string) {}
 }

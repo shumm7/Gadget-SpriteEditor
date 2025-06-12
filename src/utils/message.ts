@@ -29,7 +29,7 @@ export function setAllMessages(): JQuery.Promise<boolean> {
                 .concat(SystemMessages)
         )
         .then(function (msg) {
-            for (const [k, v] of Object.entries(Messages)) {
+            for (const [k, v] of Object.entries(Messages[Constant.defaultLanguage])) {
                 if (!(Constant.messagePrefix + k in msg) && typeof v == "string") {
                     msg[Constant.messagePrefix + k] = v
                 }

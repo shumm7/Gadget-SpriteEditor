@@ -1,11 +1,16 @@
 import Hooks from "@/utils/hooks"
-import { getImageinfo } from "@/utils/io"
 import { math, vector } from "@/utils/math"
 import Message from "@/utils/message"
+import { checkSpriteData } from "@/utils/spriteData"
+import EditSpritePage from "../SpriteEditorContent"
 
-interface SpriteCanvasConfig {}
+interface SpriteCanvasConfig {
+    parentClass: EditSpritePage
+    setParentSpriteData: (value: Record<string, any>) => void
+    setParentSpriteImage: (value: HTMLImageElement) => void
+}
 
-export default class SpriteCanvas extends OO.ui.Layout {
+export default class SpriteCanvas extends OO.ui.PanelLayout {
     // dom
     private $canvasContainer: JQuery<HTMLElement>
     private $canvas: JQuery<HTMLCanvasElement>
@@ -14,10 +19,13 @@ export default class SpriteCanvas extends OO.ui.Layout {
     private _ctx: CanvasRenderingContext2D | null = null
 
     // sprite data
-    private _data: Record<string, any> = {}
+    private _data: Record<string, any>
+    private parentClass: EditSpritePage
+    private setParentSpriteData: (value: Record<string, any>) => void
+    private setParentSpriteImage: (value: HTMLImageElement) => void
 
     // image
-    private image: HTMLImageElement
+    private _image: HTMLImageElement
     private imageSize: vector.Vector2 = { x: 0, y: 0 }
 
     // canvas
@@ -38,7 +46,6 @@ export default class SpriteCanvas extends OO.ui.Layout {
     }
 
     // parameters
-
     private parameters: OO.ui.HorizontalLayout
     private parameterScale: OO.ui.LabelWidget
     private parameterSelected: OO.ui.LabelWidget
@@ -49,9 +56,11 @@ export default class SpriteCanvas extends OO.ui.Layout {
     private mouseLeftClickPos: vector.Vector2 | null = null
     private mouseRightClickPos: vector.Vector2 | null = null
 
-    constructor(image: HTMLImageElement, data: Record<string, any>, config?: SpriteCanvasConfig) {
-        if (!config) config = {}
-
+    constructor(
+        image: HTMLImageElement,
+        spriteData: Record<string, any>,
+        config: SpriteCanvasConfig
+    ) {
         // canvas
         const $canvas = $(
             `<canvas id="mjw-sprite-editor-canvas" class="mjw-sprite-editor--component-canvas" height="300" width="300"/>`
@@ -70,47 +79,28 @@ export default class SpriteCanvas extends OO.ui.Layout {
         })
 
         // constructor
-        super({ content: [$canvasContainer, parameters] })
+        super({
+            expanded: false,
+            padded: false,
+            framed: false,
+            content: [$canvasContainer, parameters],
+        })
 
-        // UI arguments
+        // arguments
         this.$canvas = $canvas
         this.$canvasContainer = $canvasContainer
         this.parameterScale = parameterScale
         this.parameterSelected = parameterSelected
         this.parameters = parameters
-
-        // image
-        this.image = image
-        this.image.crossOrigin = "Anonymous"
+        this.parentClass = config.parentClass
+        this.setParentSpriteData = config.setParentSpriteData
+        this.setParentSpriteImage = config.setParentSpriteImage
 
         // data
-        this.data = data
+        this._data = spriteData
+        this._image = image
 
         this.initCanvas()
-    }
-
-    loadImage(text: string) {
-        if (URL.canParse(text)) {
-            this.image.src = text
-            this.image.decode().then((e) => {
-                this.imageSize.x = this.image.width
-                this.imageSize.y = this.image.height
-                mw.hook(Hooks.changedImage).fire(text)
-                this.resetCanvas()
-            })
-        } else {
-            const $this = this
-            getImageinfo(text).then(function (imageinfo) {
-                text = imageinfo.url
-                $this.image.src = text
-                $this.image.decode().then((e) => {
-                    $this.imageSize.x = imageinfo.width
-                    $this.imageSize.y = imageinfo.currentHeight
-                    mw.hook(Hooks.changedImage).fire(text)
-                    $this.resetCanvas()
-                })
-            })
-        }
     }
 
     // canvas draw
@@ -307,7 +297,7 @@ export default class SpriteCanvas extends OO.ui.Layout {
 
             // スプライトシートを描画
             ctx.drawImage(
-                this.image,
+                this.spriteImage,
                 whiteboardLeftTop.x,
                 whiteboardLeftTop.y,
                 this.imageSize.x * this.scale,
@@ -442,30 +432,37 @@ export default class SpriteCanvas extends OO.ui.Layout {
     }
 
     // getter / setter
-    get id() {
-        return this.getElementId()
-    }
-    set id(value: string) {
-        this.setElementId(value)
-    }
-
-    get data() {
+    get spriteData() {
         return this._data
     }
-    set data(value: Record<string, any>) {
-        if (typeof value === "object" && value !== null) {
-            if ("settings" in value) {
-                const spriteSizeX = Number(value.settings["width"] || value.settings["size"] || 32)
-                const spriteSizeY = Number(value.settings["height"] || value.settings["size"] || 32)
-                if (isFinite(spriteSizeX) && isFinite(spriteSizeY)) {
-                    this.spriteSize.x = Math.floor(spriteSizeX)
-                    this.spriteSize.y = Math.floor(spriteSizeY)
-                }
-                this.loadImage(value.settings["image"])
+    set spriteData(value: Record<string, any>) {
+        this.setSpriteData(value)
+    }
+    get spriteImage() {
+        return this._image
+    }
+    set spriteImage(value: HTMLImageElement) {
+        this.setSpriteImage(value)
+    }
+    setSpriteData(value: Record<string, any>) {
+        value = checkSpriteData(value)
+        if ("settings" in value) {
+            const spriteSizeX = Number(value.settings["width"] || value.settings["size"] || 32)
+            const spriteSizeY = Number(value.settings["height"] || value.settings["size"] || 32)
+            if (isFinite(spriteSizeX) && isFinite(spriteSizeY)) {
+                this.spriteSize.x = Math.floor(spriteSizeX)
+                this.spriteSize.y = Math.floor(spriteSizeY)
             }
         }
-
         this._data = value
+        this.resetCanvas()
+    }
+    setSpriteImage(value: HTMLImageElement) {
+        console.log("received ", value)
+        this.imageSize.x = value.width
+        this.imageSize.y = value.height
+        this._image = value
+        this.resetCanvas()
     }
 
     get canvasScale() {

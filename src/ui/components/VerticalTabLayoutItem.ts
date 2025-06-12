@@ -1,3 +1,5 @@
+import ContentPageLayout from "./ContentPageLayout"
+
 interface VerticalTabLayoutItemConfig {
     label?: OO.ui.HtmlSnippet | JQuery<HTMLElement> | OO.ui.Deferrable<string>
     help?: string | OO.ui.HtmlSnippet
@@ -9,8 +11,9 @@ interface VerticalTabLayoutItemConfig {
     classes?: string[]
 }
 
-class VerticalTabLayoutItem extends OO.ui.PageLayout {
+class VerticalTabLayoutItem {
     private fieldset: OO.ui.FieldsetLayout
+    pageLayout: any
 
     constructor(name: string, config?: VerticalTabLayoutItemConfig) {
         if (!config) config = {}
@@ -26,14 +29,17 @@ class VerticalTabLayoutItem extends OO.ui.PageLayout {
         })
 
         // constructor
-        super(name, {
-            content: [fieldset],
-            data: name,
-            expanded: false,
-            id: config.id,
-            classes: ["mjw-sprite-editor--component-vertical-tab-item"].concat(config.classes),
-        })
-        this.setOutlineItem(new OO.ui.OutlineOptionWidget({ label: config.label || name }))
+        this.pageLayout = ContentPageLayout(
+            name,
+            {
+                content: [fieldset],
+                data: name,
+                expanded: false,
+                id: config.id,
+                classes: ["mjw-sprite-editor--component-vertical-tab-item"].concat(config.classes),
+            },
+            config.label || name
+        )
 
         // arguments
         this.fieldset = fieldset
@@ -46,18 +52,6 @@ class VerticalTabLayoutItem extends OO.ui.PageLayout {
 
     removeItems(items: OO.ui.Element[]) {
         this.fieldset.removeItems(items)
-    }
-
-    // Getter / Setter Parameters
-    set id(value: string) {
-        this.setElementId(value)
-    }
-    get id() {
-        return this.getElementId()
-    }
-
-    get name() {
-        return this.getName()
     }
 }
 

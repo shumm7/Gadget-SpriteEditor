@@ -52,14 +52,6 @@ class ToggleInputLayout extends InputLayoutPrototype {
 
         this.input = input
     }
-
-    // getter / setter
-    get value() {
-        return this.input.getValue()
-    }
-    set value(value: boolean) {
-        this.input.setValue(value)
-    }
 }
 
 export default ToggleInputLayout

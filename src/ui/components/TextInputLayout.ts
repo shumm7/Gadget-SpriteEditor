@@ -44,7 +44,9 @@ export class InputLayoutPrototype extends OO.ui.FieldLayout<OO.ui.Widget> {
             return [msg]
         } else if (msg instanceof OO.ui.HtmlSnippet) {
             return [msg]
-        } else if (msg === undefined || msg === null) {
+        } else if (msg === undefined) {
+            return []
+        } else if (msg === null) {
             return []
         } else {
             return msg
@@ -131,11 +133,6 @@ class TextInputLayout extends InputLayoutPrototype {
     }
     set value(value: string) {
         this.input.setValue(value)
-    }
-
-    // methods
-    async isValid() {
-        return await this.input.getValidity()
     }
 }
 

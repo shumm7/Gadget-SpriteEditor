@@ -1,4 +1,4 @@
-import { loadJson, loadLua } from "@/utils/io"
+import { deepClone, getImageinfo, loadJson, loadLua } from "@/utils/io"
 import Message, { Constant } from "@/utils/message"
 import { getPageTitle, setSearchParams } from "@/utils/page"
 import Hooks from "@/utils/hooks"
@@ -6,104 +6,177 @@ import VerticalTabLayout from "@/ui/components/VerticalTabLayout"
 import VerticalTabLayoutItem from "@/ui/components/VerticalTabLayoutItem"
 import SpriteCanvas from "@/ui/specialPages/editor/SpriteCanvas"
 import SpriteSettings from "@/ui/specialPages/editor/SpriteSettings"
+import { vector } from "@/utils/math"
+import { checkSpriteData } from "@/utils/spriteData"
 
-export default class EditSpritePage {
-    private title: string = ""
-    private exists: boolean | undefined
-    private _data: Record<string, any> = {}
-    private image: HTMLImageElement
-
+export default class EditSpritePage extends VerticalTabLayout {
     private $body: JQuery<HTMLElement>
-    private panel: VerticalTabLayout
-    private pages: Record<string, VerticalTabLayoutItem> = {}
+    private pageTitle: string = ""
+    private exists: boolean | undefined
 
-    // ids
-    private canvas: SpriteCanvas
+    // sprite data
+    private _data: Record<string, any>
+    private _image: HTMLImageElement
 
-    // settings
-    private settings: SpriteSettings
+    // pages
+    private editorContents: Record<string, VerticalTabLayoutItem> = {}
+    private editorComponentIds: SpriteCanvas
+    private editorComponentSettings: SpriteSettings
 
     constructor(body: JQuery<HTMLElement>, title: string, exists: boolean | undefined) {
-        if (!(title.length > 0 && body)) setSearchParams("data")
+        if (!(title.length && body.length)) setSearchParams("data")
+
+        // constructor
+        super({
+            id: "mjw-sprite-editor",
+            classes: ["mjw-sprite-editor", "mjw-sprite-editor--container"],
+        })
+
+        // arguments
         this.$body = body
         this.exists = exists
-        this.title = title
-        this.image = new Image()
+        this.pageTitle = title
+        this._image = new Image()
+        this._image.crossOrigin = "Anonymous"
+        this._data = checkSpriteData({})
 
-        // window event
+        // page components
+        const $this = this
+        this.editorComponentIds = new SpriteCanvas(this._image, this._data, {
+            parentClass: $this,
+            setParentSpriteData: $this.setSpriteData,
+            setParentSpriteImage: $this.setSpriteImage,
+        })
+        this.editorComponentSettings = new SpriteSettings(this._data, {
+            parentClass: $this,
+            setParentSpriteData: $this.setSpriteData,
+        })
+
+        // pages
+        this.editorContents = {
+            ids: this.pageIds(),
+            sections: this.pageSections(),
+            settings: this.pageSettings(),
+            export: this.pageExport(),
+        }
+        this.addPages(
+            [
+                this.editorContents.ids,
+                this.editorContents.sections,
+                this.editorContents.settings,
+                this.editorContents.export,
+            ],
+            0
+        )
+
+        // initialize
+        this.$body.empty()
+        this.$body.append(this.$element)
         window.addEventListener("beforeunload", (e) => {
             e.preventDefault()
         })
 
-        // initialize dom
-        body.empty()
-        const container = $(`<div class="mjw-sprite-editor--container" id="mjw-sprite-editor"/>`)
-
-        // ids
-        this.canvas = new SpriteCanvas(this.image, this.data, {})
-
-        // settings
-        this.settings = new SpriteSettings(this.data)
-
-        // pages
-        this.pages.ids = this.pageIds()
-        this.pages.sections = this.pageSections()
-        this.pages.settings = this.pageSettings()
-        this.pages.export = this.pageExport()
-
-        this.panel = new VerticalTabLayout({
-            items: [this.pages.ids, this.pages.sections, this.pages.settings, this.pages.export],
-        })
-        container.append(this.panel.$element)
-        body.append(container)
-
         // load content
-        this.loadData(title)
+        this.loadSpriteData(this.pageTitle)
+            .then((spriteData) => {
+                this.setSpriteData(spriteData)
+                return spriteData
+            })
+            .then((spriteData) => {
+                if ("settings" in spriteData) {
+                    const image = spriteData.settings["image"]
+                    if (typeof image === "string") {
+                        const $this = this
+                        this.loadSpriteImage(image).then((e) => {
+                            console.log("An image has loaded successfully", e)
+                            $this.setSpriteImage($this._image)
+                        })
+                    }
+                }
+            })
     }
 
-    private loadData(title: string) {
-        const t = getPageTitle(this.title)
-        const $this = this
+    // load data
+    private loadSpriteData(title: string): Promise<Record<string, any>> {
+        const t = getPageTitle(this.pageTitle)
         if (t.getNamespaceId() === 8 && t.getExtension() === "json") {
-            loadJson(
-                Constant.path +
-                    "title=" +
-                    encodeURIComponent(title) +
-                    "&" +
-                    "action=raw&" +
-                    "ctype=" +
-                    encodeURIComponent("application/json")
-            )
+            const path = `${Constant.path}title=${encodeURIComponent(
+                title
+            )}&action=raw&ctype=${encodeURIComponent("application/json")}`
+
+            return loadJson(path)
                 .then(function (data) {
                     if (typeof data === "object" && data !== null) {
-                        $this.data = data
-                        mw.hook(Hooks.loadedJSONData).fire(data, true)
+                        var d = checkSpriteData(data)
+                        mw.hook(Hooks.loadedJSONData).fire(d, true)
+                        return d
                     }
+                    throw new Error("Cannot load sprite data.")
                 })
                 .catch((e) => {
                     console.warn(e)
-                    mw.hook(Hooks.loadedData).fire({}, false)
+                    var data = checkSpriteData({})
+                    mw.hook(Hooks.loadedData).fire(data, false)
+                    return data
                 })
         } else if (t.getNamespaceId() === 828) {
-            loadLua(Constant.path + "title=" + encodeURIComponent(title) + "&" + "action=raw")
+            const path = `${Constant.path}title=${encodeURIComponent(title)}&action=raw`
+            return loadLua(path)
                 .then(function (data) {
                     if (typeof data === "object" && data !== null) {
-                        $this.data = data
-                        mw.hook(Hooks.loadedJSONData).fire(data, true)
+                        var d = checkSpriteData(data)
+                        mw.hook(Hooks.loadedJSONData).fire(d, true)
+                        return d
                     }
+                    throw new Error("Cannot load sprite data.")
                 })
                 .catch((e) => {
                     console.warn(e)
-                    mw.hook(Hooks.loadedData).fire({}, false)
+                    var data = checkSpriteData({})
+                    mw.hook(Hooks.loadedData).fire(data, false)
+                    return data
                 })
+        } else {
+            return new Promise<Record<string, any>>(() => {
+                throw new Error("Invalid sprite file.")
+            }).catch((e) => {
+                console.warn(e)
+                var data = checkSpriteData({})
+                mw.hook(Hooks.loadedData).fire(data, false)
+                return data
+            })
         }
     }
 
+    private loadSpriteImage(text: string): Promise<Record<string, any> | string> {
+        if (URL.canParse(text)) {
+            this._image.src = text
+            return this._image.decode().then((e) => {
+                mw.hook(Hooks.changedImage).fire(text)
+                return text
+            })
+        } else {
+            const $this = this
+            return new Promise(() =>
+                getImageinfo(text).then((imageinfo) => {
+                    text = imageinfo.url
+                    $this._image.src = text
+                    return $this._image.decode().then((e) => {
+                        mw.hook(Hooks.changedImage).fire(text)
+                        return imageinfo
+                    })
+                })
+            )
+        }
+    }
+
+    // page components
     private pageIds() {
         let containerIds = new VerticalTabLayoutItem("ids", {
             label: Message.get("editor-ids-title"),
+            items: [],
         })
-        containerIds.addItems([this.canvas])
+        containerIds.addItems([this.editorComponentIds])
         return containerIds
     }
     private pageSections() {
@@ -115,7 +188,7 @@ export default class EditSpritePage {
         let containerSettings = new VerticalTabLayoutItem("settings", {
             label: Message.get("editor-settings-title"),
         })
-        containerSettings.addItems([this.settings])
+        containerSettings.addItems([this.editorComponentSettings])
         return containerSettings
     }
     private pageExport() {
@@ -125,12 +198,32 @@ export default class EditSpritePage {
     }
 
     // getter / setter
-    get data() {
+    setSpriteData(value: Record<string, any>) {
+        var data = checkSpriteData(value)
+        console.log(data)
+        console.log(this, this.editorComponentIds, this.editorComponentSettings)
+        this.editorComponentIds.setSpriteData(data)
+        this.editorComponentSettings.setSpriteData(data)
+
+        if (this._data.settings.image !== data.settings.image) {
+            const $this = this
+            this.loadSpriteImage(data.settings.image).then((e) => {
+                console.log("An image has loaded successfully", e)
+                $this.setSpriteImage($this._image)
+            })
+        }
+
+        this._data = data
+    }
+    getSpriteData() {
         return this._data
     }
-    set data(value: Record<string, any>) {
-        this._data = value
-        this.canvas.data = value
-        this.settings.data = value
+    setSpriteImage(value: HTMLImageElement) {
+        console.log(value)
+        this.editorComponentIds.setSpriteImage(value)
+        this._image = value
+    }
+    getSpriteImage() {
+        return this._image
     }
 }

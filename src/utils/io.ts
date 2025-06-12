@@ -7,15 +7,14 @@ export function getImageinfo(filename: string) {
     if (filename.indexOf("File:") != 0 && filename.indexOf("ファイル:") != 0) {
         filename = "File:" + filename
     }
-    return retryableRequest(function () {
-        return new mw.Api().get({
+    return new mw.Api()
+        .get({
             action: "query",
             prop: "imageinfo",
             titles: filename,
             iiprop: ["url", "size"],
         })
-    })
-        .then(function (data) {
+        .then((data) => {
             if (data) {
                 var pageid = Number(Object.keys(data.query.pages)[0])
                 if (typeof pageid == "number" && pageid >= 0) {
@@ -24,7 +23,7 @@ export function getImageinfo(filename: string) {
             }
             return
         })
-        .fail(function () {
+        .fail(() => {
             return
         })
 }
@@ -171,6 +170,15 @@ export function pageInfo(title?: string) {
         .fail(function () {
             return undefined
         })
+}
+
+export function deepClone<T = Object>(obj: T): T {
+    try {
+        return window.structuredClone(obj)
+    } catch (e) {
+        console.warn(e)
+        return obj
+    }
 }
 
 function retryableRequest(request: any, delay: number = 1000, retries: number = 1) {

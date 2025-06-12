@@ -88,13 +88,6 @@ class CollapsibleLayout extends OO.ui.FieldLayout<OO.ui.Widget> {
     }
 
     // Getter / Setter Parameters
-    get data() {
-        return this.getData()
-    }
-    set data(value: any) {
-        this.setData(value)
-    }
-
     set expand(state: boolean) {
         this.expandedState = state
         this.label.$element.attr({ "aria-expanded": state, "aria-pressed": state })

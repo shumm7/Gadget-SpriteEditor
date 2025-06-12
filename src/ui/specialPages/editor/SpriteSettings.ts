@@ -4,16 +4,24 @@ import ComboBoxActionLayout from "../../components/ComboBoxActionLayout"
 import TextInputLayout from "../../components/TextInputLayout"
 import NumberInputLayout from "../../components/NumberInputLayout"
 import CheckboxInputLayout from "../../components/CheckboxInputLayout"
+import { deepClone } from "@/utils/io"
+import { checkSpriteData } from "@/utils/spriteData"
+import EditSpritePage from "../SpriteEditorContent"
 
-interface SpriteSettingsConfig {}
+interface SpriteSettingsConfig {
+    parentClass: EditSpritePage
+    setParentSpriteData: (value: Record<string, any>) => void
+}
 
-export default class SpriteSettings extends OO.ui.Layout {
+export default class SpriteSettings extends OO.ui.PanelLayout {
     stack: OO.ui.StackLayout
     private select: OO.ui.RadioSelectInputWidget
     private input: ComboBoxActionLayout
+    private parentClass: EditSpritePage
+    private setParentSpriteData: (value: Record<string, any>) => void
 
     private _data: Record<string, any>
-    private items: Record<
+    private allFields: Record<
         string,
         { index: number; element: TextInputLayout | NumberInputLayout | CheckboxInputLayout }
     > = {}
@@ -33,9 +41,7 @@ export default class SpriteSettings extends OO.ui.Layout {
         "class",
     ]
 
-    constructor(data: Record<string, any>, config?: SpriteSettingsConfig) {
-        if (!config) config = {}
-
+    constructor(spriteData: Record<string, any>, config: SpriteSettingsConfig) {
         // stack
         const stack = new OO.ui.StackLayout({
             classes: ["mjw-sprite-editor--component-sprite-settings--stack"],
@@ -72,44 +78,55 @@ export default class SpriteSettings extends OO.ui.Layout {
 
         // constructor
         super({
+            expanded: false,
+            padded: false,
+            framed: false,
             content: [stack, input, select],
             classes: ["mjw-sprite-editor--component-sprite-settings"],
         })
 
-        // UI arguments
+        // arguments
         this.stack = stack
         this.input = input
         this.select = select
+        this.parentClass = config.parentClass
+        this.setParentSpriteData = config.setParentSpriteData
 
         // input events
         const $this = this
         this.input.button.on("click", () => {
             let value = $this.input.field.getValue().trim()
-            if (value && !(value in $this.items)) {
-                this.newSettingsValue(value)
+            if (value && !(value in $this.allFields)) {
+                $this.newSettingsValue(value)
             }
             $this.input.field.setValue("")
         })
 
         // data
-        this._data = data
-        this.initFields(data)
+        this._data = spriteData
+        this.initFields(spriteData)
     }
 
-    // getter / setter
-    set data(value: Record<string, any>) {
-        value = this.checkSpriteData(value)
+    // getter
+    get spriteData() {
+        return this.getSpriteData()
+    }
+    set spriteData(value: Record<string, any>) {
+        this.setSpriteData(value)
+    }
+    public setSpriteData(value: Record<string, any>) {
+        value = checkSpriteData(value)
         this.resetFields(value)
         this._data = value
     }
-    get data() {
+    public getSpriteData() {
         return this._data
     }
 
     // value
     private setFieldValue(key: string, value: any) {
-        if (key in this.items) {
-            let item = this.items[key]
+        if (key in this.allFields) {
+            let item = this.allFields[key]
             if (typeof value === "string" && item.element instanceof TextInputLayout) {
                 item.element.value = value
             } else if (typeof value === "number" && item.element instanceof NumberInputLayout) {
@@ -121,8 +138,8 @@ export default class SpriteSettings extends OO.ui.Layout {
     }
 
     private getFieldValue(key: string): string | number | boolean | undefined {
-        if (key in this.items) {
-            let item = this.items[key]
+        if (key in this.allFields) {
+            let item = this.allFields[key]
             if (item.element instanceof TextInputLayout) {
                 return item.element.value
             } else if (item.element instanceof NumberInputLayout) {
@@ -135,7 +152,7 @@ export default class SpriteSettings extends OO.ui.Layout {
 
     private newSettingsValue(key: string) {
         if (key.length > 0) {
-            let data = this.checkSpriteData()
+            let data = checkSpriteData(this.getSpriteData())
             let defValue = SettingsValue[key] || {}
             let type = defValue.type || this.select.getValue()
 
@@ -148,7 +165,7 @@ export default class SpriteSettings extends OO.ui.Layout {
             } else {
                 return
             }
-            this.data = data
+            this.setParentSpriteData.call(this.parentClass, data)
         }
     }
 
@@ -157,42 +174,42 @@ export default class SpriteSettings extends OO.ui.Layout {
         if (typeof value === "string") {
             var t = this.getTextField(key, value)
             this.stack.addItems([t], index)
-            this.items[key] = {
-                index: Object.keys(this.items).length,
+            this.allFields[key] = {
+                index: Object.keys(this.allFields).length,
                 element: t,
             }
         } else if (typeof value === "number") {
             var n = this.getNumberField(key, value)
             this.stack.addItems([n], index)
-            this.items[key] = {
-                index: Object.keys(this.items).length,
+            this.allFields[key] = {
+                index: Object.keys(this.allFields).length,
                 element: n,
             }
         } else if (typeof value === "boolean") {
             var c = this.getCheckbox(key, value)
             this.stack.addItems([c], index)
-            this.items[key] = {
-                index: Object.keys(this.items).length,
+            this.allFields[key] = {
+                index: Object.keys(this.allFields).length,
                 element: c,
             }
         }
     }
 
-    private initFields(value?: Record<string, any>) {
-        const data = this.checkSpriteData(value)
+    private initFields(value: Record<string, any>) {
+        const data = checkSpriteData(value)
         for (const key in data.settings) {
             this.pushField(key, data.settings[key])
         }
         this.input.field.setOptions(this.getSelectOptions())
     }
 
-    private resetFields(value?: Record<string, any>) {
-        const data = this.checkSpriteData(value)
+    private resetFields(value: Record<string, any>) {
+        const data = checkSpriteData(value)
 
         // 既存のフィールドの値を変更 or 新規フィールドを生成
         let ignore: Array<string> = []
         for (const key in data.settings) {
-            if (key in this.items) {
+            if (key in this.allFields) {
                 this.setFieldValue(key, data.settings[key])
             } else {
                 this.pushField(key, data.settings[key])
@@ -201,34 +218,17 @@ export default class SpriteSettings extends OO.ui.Layout {
         }
 
         // 不要なフィールドを削除
-        let keys = Object.keys(this.items).filter((s) => !ignore.includes(s))
+        let keys = Object.keys(this.allFields).filter((s) => !ignore.includes(s))
         for (const k of keys) {
             let allitem = this.stack.findItemsFromData(k)
             allitem.map((item) => {
                 item.$element.remove()
             })
-            delete this.items[k]
+            delete this.allFields[k]
         }
 
         // オプションリストを更新
         this.input.field.setOptions(this.getSelectOptions())
-    }
-
-    // sprite data
-    private checkSpriteData(value?: Record<string, any>): Record<string, any> {
-        let data = value || this._data
-        if (typeof data === "object" && data !== null) {
-            if (!("sections" in data)) data.sections = {}
-            if (!("settings" in data)) data.settings = {}
-            if (!("ids" in data)) data.ids = {}
-        } else {
-            data = {
-                settings: {},
-                sections: {},
-                ids: {},
-            }
-        }
-        return data
     }
 
     // dom
@@ -245,9 +245,9 @@ export default class SpriteSettings extends OO.ui.Layout {
             sublabel: key,
         })
         field.input.on("change", (value) => {
-            let d = $this.checkSpriteData()
+            let d = checkSpriteData($this.getSpriteData())
             d.settings[key] = value
-            this.data = d
+            $this.setParentSpriteData.call(this.parentClass, d)
         })
 
         return field
@@ -268,15 +268,15 @@ export default class SpriteSettings extends OO.ui.Layout {
 
         field.input.$input.on("change", (e) => {
             let v = Number(field.input.getValue())
-            let d = $this.checkSpriteData()
+            let d = checkSpriteData(this.getSpriteData())
             if (isFinite(v)) {
                 d.settings[key] = v
-                this.data = d
+                $this.setParentSpriteData.call(this.parentClass, d)
             } else {
                 if (SettingsValue[key] && typeof SettingsValue[key].default === "number")
                     d.settings[key] = SettingsValue[key]
                 else d.settings[key] = 0
-                this.data = d
+                $this.setParentSpriteData.call(this.parentClass, d)
             }
         })
 
@@ -297,9 +297,9 @@ export default class SpriteSettings extends OO.ui.Layout {
 
         field.input.on("change", (value) => {
             if (typeof value === "boolean") {
-                let d = $this.checkSpriteData()
+                let d = checkSpriteData(this.getSpriteData())
                 d.settings[key] = value
-                this.data = d
+                $this.setParentSpriteData.call(this.parentClass, d)
             }
         })
 
@@ -326,7 +326,7 @@ export default class SpriteSettings extends OO.ui.Layout {
     private getSelectOptions() {
         const $this = this
         return SpriteSettings.settingsName
-            .filter((s) => !(s in $this.items))
+            .filter((s) => !(s in $this.allFields))
             .map((s) => {
                 const m = Message.getObj(`settings-${s}`)
                 if (m.exists()) {

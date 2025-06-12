@@ -61,30 +61,54 @@ class VerticalTabLayout extends OO.ui.PanelLayout {
             return this.booklet.getPage(name)
         }
     }
-    addPages(pages: OO.ui.PageLayout | OO.ui.PageLayout[], index: number) {
+    addPages(
+        pages:
+            | (OO.ui.PageLayout | VerticalTabLayoutItem)
+            | (OO.ui.PageLayout | VerticalTabLayoutItem)[],
+        index: number
+    ) {
         if (Array.isArray(pages)) {
-            this.booklet.addPages(pages, index)
+            this.booklet.addPages(
+                pages.map((p) => {
+                    if (p instanceof VerticalTabLayoutItem) {
+                        return p.pageLayout
+                    }
+                    return p
+                }),
+                index
+            )
         } else {
-            this.booklet.addPages([pages], index)
+            if (pages instanceof VerticalTabLayoutItem) {
+                this.booklet.addPages([pages.pageLayout], index)
+            } else {
+                this.booklet.addPages([pages], index)
+            }
         }
     }
     clearPages() {
         this.booklet.clearPages()
     }
-    removePages(pages: OO.ui.PageLayout | OO.ui.PageLayout[]) {
+    removePages(
+        pages:
+            | (OO.ui.PageLayout | VerticalTabLayoutItem)
+            | (OO.ui.PageLayout | VerticalTabLayoutItem)[]
+    ) {
         if (Array.isArray(pages)) {
-            this.booklet.removePages(pages)
+            this.booklet.removePages(
+                pages.map((p) => {
+                    if (p instanceof VerticalTabLayoutItem) {
+                        return p.pageLayout
+                    }
+                    return p
+                })
+            )
         } else {
-            this.booklet.removePages([pages])
+            if (pages instanceof VerticalTabLayoutItem) {
+                this.booklet.removePages([pages.pageLayout])
+            } else {
+                this.booklet.removePages([pages])
+            }
         }
-    }
-
-    // Getter / Setter Parameters
-    set id(value: string) {
-        this.setElementId(value)
-    }
-    get id() {
-        return this.getElementId()
     }
 }
 
