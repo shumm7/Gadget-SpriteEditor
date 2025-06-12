@@ -29,7 +29,7 @@ export function setSearchParams(key: string, value?: string | null) {
     return p
 }
 
-export function getTitle(title?: string, ns?: number) {
+export function getPageTitle(title?: string, ns?: number) {
     if (title === undefined) {
         if (ns === undefined) {
             title = mw.config.get("wgPageName")

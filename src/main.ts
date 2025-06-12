@@ -1,6 +1,7 @@
-import { init as specialPageInit } from "./editor/_main"
+import NamespaceIds from "./data/namespaceIds"
+import SpecialPageContent from "./ui/SpecialPageContent"
 import { initHooks } from "./utils/hooks"
-import { CONSTANT, Message, setAllMessages } from "./utils/message"
+import Message, { Constant, setAllMessages } from "./utils/message"
 
 mw.hook("wikipage.content").add(function () {
     initHooks()
@@ -10,16 +11,16 @@ mw.hook("wikipage.content").add(function () {
         const contentModel = mw.config.get("wgPageContentModel")
 
         // Target Namespace
-        if (namespaceId == -1 /* Special */) {
+        if (namespaceId == NamespaceIds.special) {
             if (
-                pageTitle === CONSTANT.specialPage ||
+                pageTitle === Constant.specialPage ||
                 pageTitle === Message.get("canonical-pagename")
             ) {
-                specialPageInit()
+                new SpecialPageContent()
             }
-        } else if (namespaceId == 6 /* File */) {
-        } else if (namespaceId == 8 /* MediaWiki */) {
-        } else if (namespaceId == 828 /* Module */) {
+        } else if (namespaceId == NamespaceIds.file) {
+        } else if (namespaceId == NamespaceIds.mediawiki) {
+        } else if (namespaceId == NamespaceIds.module) {
         }
     })
 })

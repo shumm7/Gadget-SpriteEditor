@@ -1,9 +1,9 @@
-import { Message } from "@/utils/message"
-import { SettingsValue } from "@/data/settings"
-import ComboBoxActionLayout from "../components/ComboBoxActionLayout"
-import TextInputLayout from "../components/TextInputLayout"
-import NumberInputLayout from "../components/NumberInputLayout"
-import CheckboxInputLayout from "../components/CheckboxInputLayout"
+import Message from "@/utils/message"
+import SettingsValue from "@/data/settings"
+import ComboBoxActionLayout from "../../components/ComboBoxActionLayout"
+import TextInputLayout from "../../components/TextInputLayout"
+import NumberInputLayout from "../../components/NumberInputLayout"
+import CheckboxInputLayout from "../../components/CheckboxInputLayout"
 
 interface SpriteSettingsConfig {}
 

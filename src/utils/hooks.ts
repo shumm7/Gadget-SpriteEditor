@@ -1,5 +1,5 @@
 /** The list of used hooks. */
-export const HOOKS = {
+const Hooks = {
     /** When sprite data was loaded. */
     loadedData: "mjw.spriteeditor.loaded",
 
@@ -20,32 +20,32 @@ export const HOOKS = {
 
     /** When sprite was selected on Canvas. */
     selectedCanvas: "mjw.spriteeditor.selected.canvas",
-}
+} as const
+export default Hooks
 
-/** Initialize hooks */
 export function initHooks() {
-    // "mjw.spriteeditor.loaded": HOOKS.loadedData
-    mw.hook(HOOKS.loadedJSONData).add((data, flag) => {
+    // "mjw.spriteeditor.loaded": Hooks.loadedData
+    mw.hook(Hooks.loadedJSONData).add((data, flag) => {
         console.log(data, flag)
-        mw.hook(HOOKS.loadedData).fire(data, flag, "json")
+        mw.hook(Hooks.loadedData).fire(data, flag, "json")
     })
-    mw.hook(HOOKS.loadedModuleData).add((data, flag) => {
+    mw.hook(Hooks.loadedModuleData).add((data, flag) => {
         console.log(data, flag)
-        mw.hook(HOOKS.loadedData).fire(data, flag, "module")
+        mw.hook(Hooks.loadedData).fire(data, flag, "module")
     })
 
-    // "mjw.spriteeditor.selected": HOOKS.selected
-    mw.hook(HOOKS.selectedCanvas).add((data) => {
+    // "mjw.spriteeditor.selected": Hooks.selected
+    mw.hook(Hooks.selectedCanvas).add((data) => {
         console.log(data)
-        mw.hook(HOOKS.selected).fire(data, "canvas")
+        mw.hook(Hooks.selected).fire(data, "canvas")
     })
-    mw.hook(HOOKS.selectedSprite).add((data) => {
+    mw.hook(Hooks.selectedSprite).add((data) => {
         console.log(data)
-        mw.hook(HOOKS.selected).fire(data, "sprite")
+        mw.hook(Hooks.selected).fire(data, "sprite")
     })
 
-    // "mjw.spriteeditor.changed.image": HOOKS.changedImage
-    mw.hook(HOOKS.changedImage).add((data) => {
+    // "mjw.spriteeditor.changed.image": Hooks.changedImage
+    mw.hook(Hooks.changedImage).add((data) => {
         console.log(data)
     })
 }

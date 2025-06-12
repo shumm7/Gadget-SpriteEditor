@@ -1,7 +1,7 @@
 import lang_ja from "@/lang/ja"
 import lang_en from "@/lang/en"
 
-export const CONSTANT = {
+export const Constant = {
     /** Default content language. */
     defaultLanguage: "en",
     /** API endpoint path. */
@@ -10,13 +10,13 @@ export const CONSTANT = {
     specialPage: "SpriteEditor",
     /** Prefix for system messages. */
     messagePrefix: "sprite-editor-",
-}
+} as const
 
 /** Localized system messages. */
 const Messages: Record<string, Record<string, string>> = {
     ja: lang_ja,
     en: lang_en,
-}
+} as const
 
 /** MediaWiki built-in system messages to load. */
 const SystemMessages = ["edit"]
@@ -24,24 +24,24 @@ const SystemMessages = ["edit"]
 export function setAllMessages(): JQuery.Promise<boolean> {
     return new mw.Api()
         .getMessages(
-            Object.keys(Messages[CONSTANT.defaultLanguage])
-                .map((m) => CONSTANT.messagePrefix + m)
+            Object.keys(Messages[Constant.defaultLanguage])
+                .map((m) => Constant.messagePrefix + m)
                 .concat(SystemMessages)
         )
         .then(function (msg) {
             for (const [k, v] of Object.entries(Messages)) {
-                if (!(CONSTANT.messagePrefix + k in msg) && typeof v == "string") {
-                    msg[CONSTANT.messagePrefix + k] = v
+                if (!(Constant.messagePrefix + k in msg) && typeof v == "string") {
+                    msg[Constant.messagePrefix + k] = v
                 }
             }
             return msg
         })
         .then(function (msg) {
             const lang = mw.config.get("wgContentLanguage")
-            if (lang in Messages && lang !== CONSTANT.defaultLanguage) {
+            if (lang in Messages && lang !== Constant.defaultLanguage) {
                 for (const [k, v] of Object.entries(Messages[lang])) {
-                    if (CONSTANT.messagePrefix + k in msg && typeof v == "string") {
-                        msg[CONSTANT.messagePrefix + k] = v
+                    if (Constant.messagePrefix + k in msg && typeof v == "string") {
+                        msg[Constant.messagePrefix + k] = v
                     }
                 }
             }
@@ -52,28 +52,28 @@ export function setAllMessages(): JQuery.Promise<boolean> {
         })
 }
 
-export namespace Message {
-    export function getRaw(key: string, ...parameters: any[]): string {
+export default class Message {
+    static getRaw(key: string, ...parameters: any[]): string {
         return mw.msg(key, ...parameters)
     }
 
-    export function get(key: string, ...parameters: any[]): string {
-        return mw.msg(CONSTANT.messagePrefix + key, ...parameters)
+    static get(key: string, ...parameters: any[]): string {
+        return mw.msg(Constant.messagePrefix + key, ...parameters)
     }
 
-    export function getRawObj(key: string, ...parameters: any[]): mw.Message {
+    static getRawObj(key: string, ...parameters: any[]): mw.Message {
         return mw.message(key, ...parameters)
     }
 
-    export function getObj(key: string, ...parameters: any[]): mw.Message {
-        return mw.message(CONSTANT.messagePrefix + key, ...parameters)
+    static getObj(key: string, ...parameters: any[]): mw.Message {
+        return mw.message(Constant.messagePrefix + key, ...parameters)
     }
 
-    export function exists(key: string): boolean {
-        return mw.message(CONSTANT.messagePrefix + key).exists()
+    static exists(key: string): boolean {
+        return mw.message(Constant.messagePrefix + key).exists()
     }
 
-    export function existsRaw(key: string): boolean {
+    static existsRaw(key: string): boolean {
         return mw.message(key).exists()
     }
 }

@@ -1,7 +1,7 @@
-import { HOOKS } from "@/utils/hooks"
+import Hooks from "@/utils/hooks"
 import { getImageinfo } from "@/utils/io"
 import { math, vector } from "@/utils/math"
-import { Message } from "@/utils/message"
+import Message from "@/utils/message"
 
 interface SpriteCanvasConfig {}
 
@@ -95,7 +95,7 @@ export default class SpriteCanvas extends OO.ui.Layout {
             this.image.decode().then((e) => {
                 this.imageSize.x = this.image.width
                 this.imageSize.y = this.image.height
-                mw.hook(HOOKS.changedImage).fire(text)
+                mw.hook(Hooks.changedImage).fire(text)
                 this.resetCanvas()
             })
         } else {
@@ -106,7 +106,7 @@ export default class SpriteCanvas extends OO.ui.Layout {
                 $this.image.decode().then((e) => {
                     $this.imageSize.x = imageinfo.width
                     $this.imageSize.y = imageinfo.currentHeight
-                    mw.hook(HOOKS.changedImage).fire(text)
+                    mw.hook(Hooks.changedImage).fire(text)
                     $this.resetCanvas()
                 })
             })
@@ -485,7 +485,7 @@ export default class SpriteCanvas extends OO.ui.Layout {
     }
     set selectedSprite(value: vector.Vector2<number>[]) {
         this.selected = value
-        mw.hook(HOOKS.selected).fire(this.selected)
+        mw.hook(Hooks.selected).fire(this.selected)
         this.resetCanvas()
     }
 

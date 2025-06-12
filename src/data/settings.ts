@@ -1,4 +1,10 @@
-export const SettingsValue: Record<string, SettingsValueInfo> = {
+interface SettingsValueInfo {
+    id: string
+    type: "string" | "number" | "boolean"
+    default: string | number | boolean
+}
+
+const SettingsValue: Record<string, SettingsValueInfo> = {
     name: {
         id: "name",
         type: "string",
@@ -64,10 +70,5 @@ export const SettingsValue: Record<string, SettingsValueInfo> = {
         type: "string",
         default: "",
     },
-}
-
-interface SettingsValueInfo {
-    id: string
-    type: "string" | "number" | "boolean"
-    default: string | number | boolean
-}
+} as const
+export default SettingsValue

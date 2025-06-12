@@ -1,13 +1,13 @@
 import { loadJson, loadLua } from "@/utils/io"
-import { CONSTANT, Message } from "@/utils/message"
-import { getTitle, setSearchParams } from "@/utils/page"
-import { HOOKS } from "@/utils/hooks"
+import Message, { Constant } from "@/utils/message"
+import { getPageTitle, setSearchParams } from "@/utils/page"
+import Hooks from "@/utils/hooks"
 import VerticalTabLayout from "@/ui/components/VerticalTabLayout"
 import VerticalTabLayoutItem from "@/ui/components/VerticalTabLayoutItem"
-import SpriteCanvas from "@/ui/editor/SpriteCanvas"
-import SpriteSettings from "@/ui/editor/SpriteSettings"
+import SpriteCanvas from "@/ui/specialPages/editor/SpriteCanvas"
+import SpriteSettings from "@/ui/specialPages/editor/SpriteSettings"
 
-export default class SpriteEditor {
+export default class EditSpritePage {
     private title: string = ""
     private exists: boolean | undefined
     private _data: Record<string, any> = {}
@@ -62,11 +62,11 @@ export default class SpriteEditor {
     }
 
     private loadData(title: string) {
-        const t = getTitle(this.title)
+        const t = getPageTitle(this.title)
         const $this = this
         if (t.getNamespaceId() === 8 && t.getExtension() === "json") {
             loadJson(
-                CONSTANT.path +
+                Constant.path +
                     "title=" +
                     encodeURIComponent(title) +
                     "&" +
@@ -77,24 +77,24 @@ export default class SpriteEditor {
                 .then(function (data) {
                     if (typeof data === "object" && data !== null) {
                         $this.data = data
-                        mw.hook(HOOKS.loadedJSONData).fire(data, true)
+                        mw.hook(Hooks.loadedJSONData).fire(data, true)
                     }
                 })
                 .catch((e) => {
                     console.warn(e)
-                    mw.hook(HOOKS.loadedData).fire({}, false)
+                    mw.hook(Hooks.loadedData).fire({}, false)
                 })
         } else if (t.getNamespaceId() === 828) {
-            loadLua(CONSTANT.path + "title=" + encodeURIComponent(title) + "&" + "action=raw")
+            loadLua(Constant.path + "title=" + encodeURIComponent(title) + "&" + "action=raw")
                 .then(function (data) {
                     if (typeof data === "object" && data !== null) {
                         $this.data = data
-                        mw.hook(HOOKS.loadedJSONData).fire(data, true)
+                        mw.hook(Hooks.loadedJSONData).fire(data, true)
                     }
                 })
                 .catch((e) => {
                     console.warn(e)
-                    mw.hook(HOOKS.loadedData).fire({}, false)
+                    mw.hook(Hooks.loadedData).fire({}, false)
                 })
         }
     }

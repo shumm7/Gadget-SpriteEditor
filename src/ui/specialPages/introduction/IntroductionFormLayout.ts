@@ -1,6 +1,4 @@
 interface SpriteSelectorConfig {
-    padded?: boolean
-    framed?: boolean
     label?: OO.ui.Deferrable<string> | JQuery<HTMLElement> | OO.ui.HtmlSnippet
     description?: OO.ui.Deferrable<string> | JQuery<HTMLElement> | OO.ui.HtmlSnippet
     help?: string | OO.ui.HtmlSnippet
@@ -13,9 +11,6 @@ interface SpriteSelectorConfig {
     autofocus?: boolean
     validate?: string | RegExp | ((value: string) => boolean | JQuery.Promise<boolean>)
     indicator?: OO.ui.Indicator
-    required?: boolean
-    spellcheck?: boolean
-    autocomplete?: string | boolean
     maxLength?: number
     minLength?: number
 
@@ -26,7 +21,7 @@ interface SpriteSelectorConfig {
     classes?: string[]
 }
 
-export default class SpriteSelector extends OO.ui.PanelLayout {
+export default class SpriteSelectorLayout extends OO.ui.PanelLayout {
     // Element
     form: OO.ui.FormLayout
     private field: OO.ui.FieldLayout
@@ -37,8 +32,6 @@ export default class SpriteSelector extends OO.ui.PanelLayout {
     // Constructor
     constructor(config?: SpriteSelectorConfig) {
         if (!config) config = {}
-        if (config.framed === undefined) config.framed = true
-        if (config.padded === undefined) config.padded = true
         if (config.classes === undefined) config.classes = []
         if (config.autofocus === undefined) config.autofocus = true
         if (config.disabled === undefined) config.disabled = false
@@ -58,11 +51,8 @@ export default class SpriteSelector extends OO.ui.PanelLayout {
             icon: config.icon,
             autofocus: config.autofocus,
             disabled: config.disabled,
-            required: config.required,
-            spellcheck: config.spellcheck,
             maxLength: config.maxLength,
             minLength: config.minLength,
-            autocomplete: config.autocomplete,
             classes: ["mjw-sprite-editor--component-sprite-selector--input"],
         })
 
@@ -107,9 +97,9 @@ export default class SpriteSelector extends OO.ui.PanelLayout {
 
         // panel
         super({
-            padded: config.padded,
+            padded: true,
             expanded: false,
-            framed: config.framed,
+            framed: true,
             id: config.id,
             classes: ["mjw-sprite-editor--component-sprite-selector"].concat(config.classes),
             content: [form],
@@ -136,20 +126,6 @@ export default class SpriteSelector extends OO.ui.PanelLayout {
     }
     get value() {
         return this.input.getValue()
-    }
-
-    set disabled(value: boolean) {
-        this.button.setDisabled(value)
-    }
-    get disabled() {
-        return this.button.isDisabled()
-    }
-
-    get data() {
-        return this.getData()
-    }
-    set data(value: any) {
-        this.setData(value)
     }
 
     error(message?: string | OO.ui.HtmlSnippet) {
