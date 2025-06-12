@@ -1,4 +1,4 @@
-interface SpriteSelectorConfig {
+interface IntroductionFormLayoutConfig {
     label?: OO.ui.Deferrable<string> | JQuery<HTMLElement> | OO.ui.HtmlSnippet
     description?: OO.ui.Deferrable<string> | JQuery<HTMLElement> | OO.ui.HtmlSnippet
     help?: string | OO.ui.HtmlSnippet
@@ -21,7 +21,7 @@ interface SpriteSelectorConfig {
     classes?: string[]
 }
 
-export default class SpriteSelectorLayout extends OO.ui.PanelLayout {
+export default class IntroductionFormLayout extends OO.ui.PanelLayout {
     // Element
     form: OO.ui.FormLayout
     private field: OO.ui.FieldLayout
@@ -30,7 +30,7 @@ export default class SpriteSelectorLayout extends OO.ui.PanelLayout {
     private fieldset: OO.ui.FieldsetLayout
 
     // Constructor
-    constructor(config?: SpriteSelectorConfig) {
+    constructor(config?: IntroductionFormLayoutConfig) {
         if (!config) config = {}
         if (config.classes === undefined) config.classes = []
         if (config.autofocus === undefined) config.autofocus = true
