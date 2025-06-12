@@ -1,7 +1,7 @@
-/*
+/**
  Lua to JSON conversion
- Source: https://codepen.io/pneuma01/pen/XWpxPZX
- Author: pneuma01
+ @author pneuma01
+ @link https://codepen.io/pneuma01/pen/XWpxPZX
  */
 export function convertLua(src) {
     let [i, contents] = parse_lua(src, 0, [])
