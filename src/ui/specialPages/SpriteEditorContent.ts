@@ -42,12 +42,12 @@ export default class EditSpritePage extends VerticalTabLayout {
 
         // page components
         const $this = this
-        this.editorComponentIds = new SpriteCanvas(this._image, this._data, {
+        this.editorComponentIds = new SpriteCanvas(deepClone(this._image), deepClone(this._data), {
             parentClass: $this,
             setParentSpriteData: $this.setSpriteData,
             setParentSpriteImage: $this.setSpriteImage,
         })
-        this.editorComponentSettings = new SpriteSettings(this._data, {
+        this.editorComponentSettings = new SpriteSettings(deepClone(this._data), {
             parentClass: $this,
             setParentSpriteData: $this.setSpriteData,
         })
@@ -157,15 +157,17 @@ export default class EditSpritePage extends VerticalTabLayout {
             })
         } else {
             const $this = this
-            return new Promise(() =>
-                getImageinfo(text).then((imageinfo) => {
-                    text = imageinfo.url
-                    $this._image.src = text
-                    return $this._image.decode().then((e) => {
-                        mw.hook(Hooks.changedImage).fire(text)
-                        return imageinfo
+            return new Promise(
+                (resolve) =>
+                    getImageinfo(text).then((imageinfo) => {
+                        text = imageinfo.url
+                        $this._image.src = text
+                        return $this._image.decode().then((e) => {
+                            mw.hook(Hooks.changedImage).fire(text)
+                            return imageinfo
+                        })
                     })
-                })
+                //todo
             )
         }
     }
@@ -201,9 +203,8 @@ export default class EditSpritePage extends VerticalTabLayout {
     setSpriteData(value: Record<string, any>) {
         var data = checkSpriteData(value)
         console.log(data)
-        console.log(this, this.editorComponentIds, this.editorComponentSettings)
-        this.editorComponentIds.setSpriteData(data)
-        this.editorComponentSettings.setSpriteData(data)
+        this.editorComponentIds.setSpriteData(deepClone(data))
+        this.editorComponentSettings.setSpriteData(deepClone(data))
 
         if (this._data.settings.image !== data.settings.image) {
             const $this = this
@@ -213,15 +214,15 @@ export default class EditSpritePage extends VerticalTabLayout {
             })
         }
 
-        this._data = data
+        this._data = deepClone(data)
     }
     getSpriteData() {
         return this._data
     }
     setSpriteImage(value: HTMLImageElement) {
         console.log(value)
-        this.editorComponentIds.setSpriteImage(value)
-        this._image = value
+        this.editorComponentIds.setSpriteImage(deepClone(value))
+        this._image = deepClone(value)
     }
     getSpriteImage() {
         return this._image

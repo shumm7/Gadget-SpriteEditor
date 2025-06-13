@@ -43,6 +43,7 @@ const root = {
     "editor-settings-type-string": "String",
     "editor-settings-type-number": "Number",
     "editor-settings-type-boolean": "Boolean",
+    "editor-settings-field-placeholder-autovalue": "[auto-value]",
     "editor-canvas-scale": "Scale: <b>$1%</b>",
     "editor-canvas-selected": "Selected: <b>$1</b> ($2, $3)",
     "editor-canvas-selected-multiple": "Selected: <b>$1</b>",

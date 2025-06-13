@@ -165,8 +165,12 @@ export default class SpriteSettings extends OO.ui.PanelLayout {
             } else {
                 return
             }
-            this.setParentSpriteData.call(this.parentClass, data)
+            this.updateSpriteData(data)
         }
+    }
+
+    private updateSpriteData(data: Record<string, any>) {
+        this.setParentSpriteData.call(this.parentClass, data)
     }
 
     // fields
@@ -244,10 +248,11 @@ export default class SpriteSettings extends OO.ui.PanelLayout {
             key: key,
             sublabel: key,
         })
-        field.input.on("change", (value) => {
+        field.input.$input.on("change", (e) => {
+            let value = field.input.getValue()
             let d = checkSpriteData($this.getSpriteData())
             d.settings[key] = value
-            $this.setParentSpriteData.call(this.parentClass, d)
+            this.updateSpriteData(d)
         })
 
         return field
@@ -258,8 +263,8 @@ export default class SpriteSettings extends OO.ui.PanelLayout {
         if (typeof value !== "number") value = 0
 
         let field = new NumberInputLayout({
-            label: this.getFieldLabel(key),
-            help: this.getFieldDescription(key),
+            label: $this.getFieldLabel(key),
+            help: $this.getFieldDescription(key),
             value: value,
             key: key,
             sublabel: key,
@@ -267,17 +272,33 @@ export default class SpriteSettings extends OO.ui.PanelLayout {
         })
 
         field.input.$input.on("change", (e) => {
-            let v = Number(field.input.getValue())
+            let str = field.input.getValue()
+            let v = Number(str)
             let d = checkSpriteData(this.getSpriteData())
+
+            if (
+                (key === "sheet-height" || key === "sheet-width" || key === "sheetsize") &&
+                str.length === 0
+            ) {
+                field.input.$input.attr(
+                    "placeholder",
+                    Message.get("editor-settings-field-placeholder-autovalue")
+                )
+                d.settings[key] = ""
+                this.updateSpriteData(d)
+                return
+            } else {
+                field.input.$input.removeAttr("placeholder")
+            }
+
             if (isFinite(v)) {
                 d.settings[key] = v
-                $this.setParentSpriteData.call(this.parentClass, d)
             } else {
                 if (SettingsValue[key] && typeof SettingsValue[key].default === "number")
                     d.settings[key] = SettingsValue[key]
                 else d.settings[key] = 0
-                $this.setParentSpriteData.call(this.parentClass, d)
             }
+            this.updateSpriteData(d)
         })
 
         return field
@@ -299,7 +320,7 @@ export default class SpriteSettings extends OO.ui.PanelLayout {
             if (typeof value === "boolean") {
                 let d = checkSpriteData(this.getSpriteData())
                 d.settings[key] = value
-                $this.setParentSpriteData.call(this.parentClass, d)
+                this.updateSpriteData(d)
             }
         })
 
