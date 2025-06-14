@@ -59,15 +59,7 @@ export default class EditSpritePage extends VerticalTabLayout {
             settings: this.pageSettings(),
             export: this.pageExport(),
         }
-        this.addPages(
-            [
-                this.editorContents.ids,
-                this.editorContents.sections,
-                this.editorContents.settings,
-                this.editorContents.export,
-            ],
-            0
-        )
+        this.addPages([this.editorContents.ids, this.editorContents.sections, this.editorContents.settings, this.editorContents.export], 0)
 
         // initialize
         this.$body.empty()
@@ -100,9 +92,7 @@ export default class EditSpritePage extends VerticalTabLayout {
     private loadSpriteData(title: string): Promise<Record<string, any>> {
         const t = getPageTitle(this.pageTitle)
         if (t.getNamespaceId() === 8 && t.getExtension() === "json") {
-            const path = `${Constant.path}title=${encodeURIComponent(
-                title
-            )}&action=raw&ctype=${encodeURIComponent("application/json")}`
+            const path = `${Constant.path}title=${encodeURIComponent(title)}&action=raw&ctype=${encodeURIComponent("application/json")}`
 
             return loadJson(path)
                 .then(function (data) {
@@ -157,9 +147,9 @@ export default class EditSpritePage extends VerticalTabLayout {
             })
         } else {
             const $this = this
-            return new Promise(
-                (resolve) =>
-                    getImageinfo(text).then((imageinfo) => {
+            return new Promise((resolve, reject) => {
+                return getImageinfo(text)
+                    .then((imageinfo) => {
                         text = imageinfo.url
                         $this._image.src = text
                         return $this._image.decode().then((e) => {
@@ -167,8 +157,9 @@ export default class EditSpritePage extends VerticalTabLayout {
                             return imageinfo
                         })
                     })
-                //todo
-            )
+                    .done(resolve)
+                    .fail(reject)
+            })
         }
     }
 

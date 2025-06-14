@@ -7,14 +7,15 @@ export function getImageinfo(filename: string) {
     if (filename.indexOf("File:") != 0 && filename.indexOf("ファイル:") != 0) {
         filename = "File:" + filename
     }
-    return new mw.Api()
-        .get({
+    return retryableRequest(function () {
+        return new mw.Api().get({
             action: "query",
             prop: "imageinfo",
             titles: filename,
             iiprop: ["url", "size"],
         })
-        .then((data) => {
+    })
+        .then(function (data) {
             if (data) {
                 var pageid = Number(Object.keys(data.query.pages)[0])
                 if (typeof pageid == "number" && pageid >= 0) {
@@ -23,7 +24,7 @@ export function getImageinfo(filename: string) {
             }
             return
         })
-        .fail(() => {
+        .fail(function () {
             return
         })
 }
