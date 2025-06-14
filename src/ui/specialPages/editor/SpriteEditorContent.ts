@@ -4,9 +4,8 @@ import { getPageTitle, setSearchParams } from "@/utils/page"
 import Hooks from "@/utils/hooks"
 import VerticalTabLayout from "@/ui/components/VerticalTabLayout"
 import VerticalTabLayoutItem from "@/ui/components/VerticalTabLayoutItem"
-import SpriteCanvas from "@/ui/specialPages/editor/SpriteCanvas"
-import SpriteSettings from "@/ui/specialPages/editor/SpriteSettings"
-import { vector } from "@/utils/math"
+import SpriteCanvas from "@/ui/specialPages/editor/cogs/SpriteCanvas"
+import SpriteSettings from "@/ui/specialPages/editor/cogs/SpriteSettings"
 import { checkSpriteData } from "@/utils/spriteData"
 
 export default class EditSpritePage extends VerticalTabLayout {
@@ -59,7 +58,15 @@ export default class EditSpritePage extends VerticalTabLayout {
             settings: this.pageSettings(),
             export: this.pageExport(),
         }
-        this.addPages([this.editorContents.ids, this.editorContents.sections, this.editorContents.settings, this.editorContents.export], 0)
+        this.addPages(
+            [
+                this.editorContents.ids,
+                this.editorContents.sections,
+                this.editorContents.settings,
+                this.editorContents.export,
+            ],
+            0
+        )
 
         // initialize
         this.$body.empty()

@@ -1,9 +1,9 @@
 import Message from "@/utils/message"
 import SettingsValue from "@/data/settings"
-import ComboBoxActionLayout from "../../components/ComboBoxActionLayout"
-import TextInputLayout from "../../components/TextInputLayout"
-import NumberInputLayout from "../../components/NumberInputLayout"
-import CheckboxInputLayout from "../../components/CheckboxInputLayout"
+import ComboBoxActionLayout from "@/ui/components/ComboBoxActionLayout"
+import TextInputLayout from "@/ui/components/TextInputLayout"
+import NumberInputLayout from "@/ui/components/NumberInputLayout"
+import CheckboxInputLayout from "@/ui/components/CheckboxInputLayout"
 import { deepClone } from "@/utils/io"
 import { checkSpriteData } from "@/utils/spriteData"
 import EditSpritePage from "../SpriteEditorContent"
@@ -276,14 +276,8 @@ export default class SpriteSettings extends OO.ui.PanelLayout {
             let v = Number(str)
             let d = checkSpriteData(this.getSpriteData())
 
-            if (
-                (key === "sheet-height" || key === "sheet-width" || key === "sheetsize") &&
-                str.length === 0
-            ) {
-                field.input.$input.attr(
-                    "placeholder",
-                    Message.get("editor-settings-field-placeholder-autovalue")
-                )
+            if ((key === "sheet-height" || key === "sheet-width" || key === "sheetsize") && str.length === 0) {
+                field.input.$input.attr("placeholder", Message.get("editor-settings-field-placeholder-autovalue"))
                 d.settings[key] = ""
                 this.updateSpriteData(d)
                 return

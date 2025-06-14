@@ -1,5 +1,12 @@
-export namespace math {
-    export function range(n: number, min?: number, max?: number) {
+namespace math {
+    /**
+     * Limit the given number `n` by the minimum and maximum values.
+     * @param n Given number
+     * @param min Minimum
+     * @param max Maximum
+     * @returns The value of `n`. If `n` is less than `min`, `min` will be returned. If `n` is greater than `max` also, `max` will be returned.
+     */
+    export function range(n: number, min?: number, max?: number): number {
         if (min !== undefined && max !== undefined && min > max) {
             return n
         }
@@ -12,7 +19,14 @@ export namespace math {
         return n
     }
 
-    export function limit(n: number, min?: number, max?: number) {
+    /**
+     * Checks whether the given number `n` is within the range of the minimum and maximum values, and returns undefined if it is out of range.
+     * @param n Given number
+     * @param min Minimum
+     * @param max Maximum
+     * @returns The value of `n`. If the value is outside the specified minimum or maximum range, it returns undefined.
+     */
+    export function limit(n: number, min?: number, max?: number): number | undefined {
         if (min !== undefined && max !== undefined && min > max) {
             return undefined
         }
@@ -25,18 +39,17 @@ export namespace math {
         return n
     }
 
-    export function hypot(x: number, y: number) {
-        return Math.sqrt(x * x + y * y)
+    /**
+     * Get the square root of the sum of squares.
+     * @param x First given number
+     * @param y Second and subsequent given numbers
+     * @returns Square root of sum of squares
+     */
+    export function hypot(x: number, ...y: number[]) {
+        let sum: number = x * x
+        for (let n of y) sum += n * n
+        return Math.sqrt(sum)
     }
 }
 
-export namespace vector {
-    export interface Vector2<T = number> {
-        x: T
-        y: T
-    }
-
-    export function some<T>(list: Array<Vector2<T>>, value: Vector2<T>) {
-        return list.some((e) => e.x === value.x && e.y === value.y)
-    }
-}
+export default math

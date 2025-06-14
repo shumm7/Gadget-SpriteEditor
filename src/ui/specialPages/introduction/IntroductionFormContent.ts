@@ -1,6 +1,6 @@
-import Message from "../../utils/message"
+import Message from "@/utils/message"
 import { setSearchParams } from "@/utils/page"
-import IntroductionFormLayout from "@/ui/specialPages/introduction/IntroductionFormLayout"
+import IntroductionFormLayout from "@/ui/specialPages/introduction/cogs/IntroductionFormLayout"
 
 export default class SpriteIntroduction extends OO.ui.PanelLayout {
     private pageTitle: string
@@ -8,11 +8,7 @@ export default class SpriteIntroduction extends OO.ui.PanelLayout {
     private selector: IntroductionFormLayout
     private label: OO.ui.LabelWidget
 
-    constructor(
-        body: JQuery<HTMLElement>,
-        title: string | null,
-        error?: string | OO.ui.HtmlSnippet
-    ) {
+    constructor(body: JQuery<HTMLElement>, title: string | null, error?: string | OO.ui.HtmlSnippet) {
         title = title || ""
 
         // description

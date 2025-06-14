@@ -56,11 +56,7 @@ export default class SpriteCanvas extends OO.ui.PanelLayout {
     private mouseLeftClickPos: vector.Vector2 | null = null
     private mouseRightClickPos: vector.Vector2 | null = null
 
-    constructor(
-        image: HTMLImageElement,
-        spriteData: Record<string, any>,
-        config: SpriteCanvasConfig
-    ) {
+    constructor(image: HTMLImageElement, spriteData: Record<string, any>, config: SpriteCanvasConfig) {
         // canvas
         const $canvas = $(
             `<canvas id="mjw-sprite-editor-canvas" class="mjw-sprite-editor--component-canvas" height="300" width="300"/>`
@@ -118,8 +114,7 @@ export default class SpriteCanvas extends OO.ui.PanelLayout {
             var entry = entries[0]
             if (!canvas) return
 
-            const directionIsHorizontal =
-                getComputedStyle(canvas).writingMode.startsWith("horizontal")
+            const directionIsHorizontal = getComputedStyle(canvas).writingMode.startsWith("horizontal")
 
             //const size = entry.devicePixelContentBoxSize[0]
             const size = entry.contentBoxSize[0]
@@ -159,8 +154,7 @@ export default class SpriteCanvas extends OO.ui.PanelLayout {
             if (this.prevLocationLeft != null) {
                 if (
                     this.mouseLeftClickPos !== null &&
-                    math.hypot(this.mouseLeftClickPos.x - pos.x, this.mouseLeftClickPos.y - pos.y) >
-                        10
+                    math.hypot(this.mouseLeftClickPos.x - pos.x, this.mouseLeftClickPos.y - pos.y) > 10
                 ) {
                     this.mouseLeftClickPos = null
                 }
@@ -168,16 +162,8 @@ export default class SpriteCanvas extends OO.ui.PanelLayout {
                 const dx = pos.x - this.prevLocationLeft.x
                 const dy = pos.y - this.prevLocationLeft.y
                 this.location = {
-                    x: math.range(
-                        this.location.x + dx / canvas.width,
-                        -3 * this.scale,
-                        3 * this.scale
-                    ),
-                    y: math.range(
-                        this.location.y + dy / canvas.height,
-                        -3 * this.scale,
-                        3 * this.scale
-                    ),
+                    x: math.range(this.location.x + dx / canvas.width, -3 * this.scale, 3 * this.scale),
+                    y: math.range(this.location.y + dy / canvas.height, -3 * this.scale, 3 * this.scale),
                 }
                 this.prevLocationLeft = { x: pos.x, y: pos.y }
             }
@@ -201,8 +187,7 @@ export default class SpriteCanvas extends OO.ui.PanelLayout {
 
                 if (
                     this.mouseLeftClickPos !== null &&
-                    math.hypot(this.mouseLeftClickPos.x - pos.x, this.mouseLeftClickPos.y - pos.y) <
-                        10
+                    math.hypot(this.mouseLeftClickPos.x - pos.x, this.mouseLeftClickPos.y - pos.y) < 10
                 ) {
                     const loc = this.getSpriteLocation(canvas, pos)
 
@@ -231,16 +216,8 @@ export default class SpriteCanvas extends OO.ui.PanelLayout {
                     const locStart = this.getSpriteLocationRange(canvas, this.mouseRightClickPos)
                     const locEnd = this.getSpriteLocationRange(canvas, pos)
                     let ret = []
-                    for (
-                        let x = Math.min(locStart.x, locEnd.x);
-                        x <= Math.max(locStart.x, locEnd.x);
-                        x++
-                    ) {
-                        for (
-                            let y = Math.min(locStart.y, locEnd.y);
-                            y <= Math.max(locStart.y, locEnd.y);
-                            y++
-                        ) {
+                    for (let x = Math.min(locStart.x, locEnd.x); x <= Math.max(locStart.x, locEnd.x); x++) {
+                        for (let y = Math.min(locStart.y, locEnd.y); y <= Math.max(locStart.y, locEnd.y); y++) {
                             ret.push({ x, y })
                         }
                     }
@@ -323,12 +300,7 @@ export default class SpriteCanvas extends OO.ui.PanelLayout {
                 }
                 for (let y = 0; y <= canvas.height / (gridStep.y * this.scale) + 1; y++) {
                     ctx.fillStyle = this.canvasOption.gridLineColor
-                    ctx.fillRect(
-                        0,
-                        y * gridStep.y * this.scale + gridStart.y + -lineWidth / 2,
-                        canvas.width,
-                        lineWidth
-                    )
+                    ctx.fillRect(0, y * gridStep.y * this.scale + gridStart.y + -lineWidth / 2, canvas.width, lineWidth)
                 }
             }
 
@@ -376,10 +348,7 @@ export default class SpriteCanvas extends OO.ui.PanelLayout {
             )
         } else {
             this.parameterSelected.setLabel(
-                Message.getObj(
-                    "editor-canvas-selected-multiple",
-                    this.selectedSprite.length
-                ).parseDom()
+                Message.getObj("editor-canvas-selected-multiple", this.selectedSprite.length).parseDom()
             )
         }
     }
@@ -399,10 +368,7 @@ export default class SpriteCanvas extends OO.ui.PanelLayout {
         }
     }
 
-    private getSpriteLocation(
-        canvas: HTMLCanvasElement,
-        mousePos: vector.Vector2
-    ): vector.Vector2<number | undefined> {
+    private getSpriteLocation(canvas: HTMLCanvasElement, mousePos: vector.Vector2): vector.Vector2<number | undefined> {
         const vec = this.getWhiteboardLeftTop(canvas)
         const pos: vector.Vector2 = {
             x: Math.floor((mousePos.x - vec.x) / this.spriteSize.x / this.scale),
@@ -415,10 +381,7 @@ export default class SpriteCanvas extends OO.ui.PanelLayout {
         }
     }
 
-    private getSpriteLocationRange = (
-        canvas: HTMLCanvasElement,
-        mousePos: vector.Vector2
-    ): vector.Vector2 => {
+    private getSpriteLocationRange = (canvas: HTMLCanvasElement, mousePos: vector.Vector2): vector.Vector2 => {
         const vec = this.getWhiteboardLeftTop(canvas)
         const pos: vector.Vector2 = {
             x: Math.floor((mousePos.x - vec.x) / this.spriteSize.x / this.scale),

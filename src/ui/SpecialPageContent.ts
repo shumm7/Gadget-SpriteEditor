@@ -1,8 +1,8 @@
 import Message from "@/utils/message"
 import { pageInfo } from "@/utils/io"
 import { getSearchParams, getPageTitle } from "@/utils/page"
-import IntroductionFormContent from "./specialPages/IntroductionFormContent"
-import SpriteEditorContent from "./specialPages/SpriteEditorContent"
+import IntroductionFormContent from "@/ui/specialPages/introduction/IntroductionFormContent"
+import SpriteEditorContent from "@/ui/specialPages/editor/SpriteEditorContent"
 
 export default class SpecialPageContent {
     private $body: JQuery<HTMLElement>
@@ -53,17 +53,9 @@ export default class SpecialPageContent {
                         }
                     } else {
                         if (ext && ext.length > 0) {
-                            error = Message.getObj(
-                                "selector-extension-error",
-                                target,
-                                ext
-                            ).parseDom()
+                            error = Message.getObj("selector-extension-error", target, ext).parseDom()
                         } else {
-                            error = Message.getObj(
-                                "selector-noextension-error",
-                                target,
-                                ext
-                            ).parseDom()
+                            error = Message.getObj("selector-noextension-error", target, ext).parseDom()
                         }
                     }
                 } else if (nsId === 828) {
@@ -97,10 +89,7 @@ export default class SpecialPageContent {
         return $("#mw-content-text")
     }
 
-    private showIntroductionForm(
-        targetPageName: string | null,
-        error?: string | OO.ui.HtmlSnippet
-    ) {
+    private showIntroductionForm(targetPageName: string | null, error?: string | OO.ui.HtmlSnippet) {
         new IntroductionFormContent(this.$body, targetPageName, error)
     }
 
