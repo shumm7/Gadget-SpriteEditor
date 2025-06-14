@@ -1,5 +1,6 @@
 import Hooks from "@/utils/hooks"
-import { math, vector } from "@/utils/math"
+import math from "@/utils/math"
+import vector from "@/utils/vector"
 import Message from "@/utils/message"
 import { checkSpriteData } from "@/utils/spriteData"
 import EditSpritePage from "../SpriteEditorContent"
@@ -63,24 +64,15 @@ export default class SpriteCanvas extends OO.ui.PanelLayout {
         ) as JQuery<HTMLCanvasElement>
 
         // canvas container
-        const $canvasContainer = $(
-            `<div id="mjw-sprite-editor-canvas-container" class="mjw-sprite-editor--component-canvas--container"></div>`
-        ).append($canvas)
+        const $canvasContainer = $(`<div id="mjw-sprite-editor-canvas-container" class="mjw-sprite-editor--component-canvas--container"></div>`).append($canvas)
 
         // canvas indicators
         const parameterScale = new OO.ui.LabelWidget()
         const parameterSelected = new OO.ui.LabelWidget()
-        const parameters = new OO.ui.HorizontalLayout({
-            items: [parameterScale, parameterSelected],
-        })
+        const parameters = new OO.ui.HorizontalLayout({ items: [parameterScale, parameterSelected] })
 
         // constructor
-        super({
-            expanded: false,
-            padded: false,
-            framed: false,
-            content: [$canvasContainer, parameters],
-        })
+        super({ expanded: false, padded: false, framed: false, content: [$canvasContainer, parameters] })
 
         // arguments
         this.$canvas = $canvas
@@ -146,16 +138,10 @@ export default class SpriteCanvas extends OO.ui.PanelLayout {
         /* MouseMove イベントハンドラー */
         const mouseMove = (e: MouseEvent) => {
             const canvasRect = canvas.getBoundingClientRect()
-            const pos = {
-                x: e.clientX - canvasRect.left,
-                y: e.clientY - canvasRect.top,
-            }
+            const pos = { x: e.clientX - canvasRect.left, y: e.clientY - canvasRect.top }
 
             if (this.prevLocationLeft != null) {
-                if (
-                    this.mouseLeftClickPos !== null &&
-                    math.hypot(this.mouseLeftClickPos.x - pos.x, this.mouseLeftClickPos.y - pos.y) > 10
-                ) {
+                if (this.mouseLeftClickPos !== null && math.hypot(this.mouseLeftClickPos.x - pos.x, this.mouseLeftClickPos.y - pos.y) > 10) {
                     this.mouseLeftClickPos = null
                 }
 
@@ -176,19 +162,13 @@ export default class SpriteCanvas extends OO.ui.PanelLayout {
         /* MouseUp イベントハンドラー */
         const mouseUp = (e: MouseEvent) => {
             const canvasRect = canvas.getBoundingClientRect()
-            const pos = {
-                x: e.clientX - canvasRect.left,
-                y: e.clientY - canvasRect.top,
-            }
+            const pos = { x: e.clientX - canvasRect.left, y: e.clientY - canvasRect.top }
 
             if (e.button === 0) {
                 /* 左クリック（スプライトを選択） */
                 this.prevLocationLeft = null
 
-                if (
-                    this.mouseLeftClickPos !== null &&
-                    math.hypot(this.mouseLeftClickPos.x - pos.x, this.mouseLeftClickPos.y - pos.y) < 10
-                ) {
+                if (this.mouseLeftClickPos !== null && math.hypot(this.mouseLeftClickPos.x - pos.x, this.mouseLeftClickPos.y - pos.y) < 10) {
                     const loc = this.getSpriteLocation(canvas, pos)
 
                     if (loc.x !== undefined && loc.y !== undefined) {
@@ -237,10 +217,7 @@ export default class SpriteCanvas extends OO.ui.PanelLayout {
             const dx = (this.location.x - 0.5) / this.scale
             const dy = (this.location.y - 0.5) / this.scale
 
-            this.location = {
-                x: dx * newScale + 0.5,
-                y: dy * newScale + 0.5,
-            }
+            this.location = { x: dx * newScale + 0.5, y: dy * newScale + 0.5 }
             this.canvasScale = newScale
         }
 
@@ -273,30 +250,16 @@ export default class SpriteCanvas extends OO.ui.PanelLayout {
             ctx.fillRect(0, 0, canvas.width, canvas.height)
 
             // スプライトシートを描画
-            ctx.drawImage(
-                this.spriteImage,
-                whiteboardLeftTop.x,
-                whiteboardLeftTop.y,
-                this.imageSize.x * this.scale,
-                this.imageSize.y * this.scale
-            )
+            ctx.drawImage(this.spriteImage, whiteboardLeftTop.x, whiteboardLeftTop.y, this.imageSize.x * this.scale, this.imageSize.y * this.scale)
 
             // グリッド描画
             if (this.canvasOption.grid) {
                 const lineWidth = this.canvasOption.gridLineWidth
-                const gridStart = {
-                    x: whiteboardLeftTop.x % (gridStep.x * this.scale),
-                    y: whiteboardLeftTop.y % (gridStep.y * this.scale),
-                }
+                const gridStart = { x: whiteboardLeftTop.x % (gridStep.x * this.scale), y: whiteboardLeftTop.y % (gridStep.y * this.scale) }
 
                 for (let x = 0; x <= canvas.width / (gridStep.x * this.scale) + 1; x++) {
                     ctx.fillStyle = this.canvasOption.gridLineColor
-                    ctx.fillRect(
-                        x * gridStep.x * this.scale + gridStart.x + -lineWidth / 2,
-                        0,
-                        lineWidth,
-                        canvas.height
-                    )
+                    ctx.fillRect(x * gridStep.x * this.scale + gridStart.x + -lineWidth / 2, 0, lineWidth, canvas.height)
                 }
                 for (let y = 0; y <= canvas.height / (gridStep.y * this.scale) + 1; y++) {
                     ctx.fillStyle = this.canvasOption.gridLineColor
@@ -305,10 +268,7 @@ export default class SpriteCanvas extends OO.ui.PanelLayout {
             }
 
             // 選択中のスプライトハイライト
-            const sprite = {
-                x: this.spriteSize.x * this.scale,
-                y: this.spriteSize.y * this.scale,
-            }
+            const sprite = { x: this.spriteSize.x * this.scale, y: this.spriteSize.y * this.scale }
             this.selected.map((l) => {
                 ctx.fillStyle = this.canvasOption.highlightColor
                 ctx.fillRect(
@@ -333,23 +293,14 @@ export default class SpriteCanvas extends OO.ui.PanelLayout {
     }
 
     private resetParameters() {
-        this.parameterScale.setLabel(
-            Message.getObj("editor-canvas-scale", Math.floor(this.canvasScale * 100)).parseDom()
-        )
+        this.parameterScale.setLabel(Message.getObj("editor-canvas-scale", Math.floor(this.canvasScale * 100)).parseDom())
 
         if (this.selectedSprite.length === 1) {
             this.parameterSelected.setLabel(
-                Message.getObj(
-                    "editor-canvas-selected",
-                    this.selectedSprite.length,
-                    this.selectedSprite[0].x,
-                    this.selectedSprite[0].y
-                ).parseDom()
+                Message.getObj("editor-canvas-selected", this.selectedSprite.length, this.selectedSprite[0].x, this.selectedSprite[0].y).parseDom()
             )
         } else {
-            this.parameterSelected.setLabel(
-                Message.getObj("editor-canvas-selected-multiple", this.selectedSprite.length).parseDom()
-            )
+            this.parameterSelected.setLabel(Message.getObj("editor-canvas-selected-multiple", this.selectedSprite.length).parseDom())
         }
     }
 
@@ -357,15 +308,9 @@ export default class SpriteCanvas extends OO.ui.PanelLayout {
     private getWhiteboardLeftTop(canvas: HTMLCanvasElement): vector.Vector2 {
         const currentWidth = this.imageSize.x * this.scale
         const currentHeight = this.imageSize.y * this.scale
-        const vec: vector.Vector2 = {
-            x: (this.location.x - 0.5) * canvas.width,
-            y: (this.location.y - 0.5) * canvas.height,
-        }
+        const vec: vector.Vector2 = { x: (this.location.x - 0.5) * canvas.width, y: (this.location.y - 0.5) * canvas.height }
 
-        return {
-            x: -currentWidth / 2 + canvas.width / 2 + vec.x,
-            y: -currentHeight / 2 + canvas.height / 2 + vec.y,
-        }
+        return { x: -currentWidth / 2 + canvas.width / 2 + vec.x, y: -currentHeight / 2 + canvas.height / 2 + vec.y }
     }
 
     private getSpriteLocation(canvas: HTMLCanvasElement, mousePos: vector.Vector2): vector.Vector2<number | undefined> {
