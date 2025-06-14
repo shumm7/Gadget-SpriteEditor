@@ -1,9 +1,6 @@
-import { vector } from "./math"
+import vector from "@/utils/vector"
 
-export function downloadImage(
-    image: HTMLImageElement | HTMLCanvasElement,
-    filename: string = "sprite"
-) {
+export function downloadImage(image: HTMLImageElement | HTMLCanvasElement, filename: string = "sprite") {
     if (image instanceof HTMLImageElement) {
         const canvas = document.createElement("canvas")
         canvas.width = image.width
@@ -20,11 +17,7 @@ export function downloadImage(
     }
 }
 
-export function cropSprite(
-    image: HTMLImageElement,
-    pos: vector.Vector2,
-    spriteSize: vector.Vector2
-): HTMLCanvasElement | null {
+export function cropSprite(image: HTMLImageElement, pos: vector.Vector2, spriteSize: vector.Vector2): HTMLCanvasElement | null {
     const canvas = document.createElement("canvas")
     canvas.width = image.width
     canvas.height = image.height

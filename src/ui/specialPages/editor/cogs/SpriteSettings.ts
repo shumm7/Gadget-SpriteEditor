@@ -4,7 +4,7 @@ import ComboBoxActionLayout from "@/ui/components/ComboBoxActionLayout"
 import TextInputLayout from "@/ui/components/TextInputLayout"
 import NumberInputLayout from "@/ui/components/NumberInputLayout"
 import CheckboxInputLayout from "@/ui/components/CheckboxInputLayout"
-import { deepClone } from "@/utils/io"
+import Misc from "@/utils/misc"
 import { checkSpriteData } from "@/utils/spriteData"
 import EditSpritePage from "../SpriteEditorContent"
 
@@ -21,10 +21,7 @@ export default class SpriteSettings extends OO.ui.PanelLayout {
     private setParentSpriteData: (value: Record<string, any>) => void
 
     private _data: Record<string, any>
-    private allFields: Record<
-        string,
-        { index: number; element: TextInputLayout | NumberInputLayout | CheckboxInputLayout }
-    > = {}
+    private allFields: Record<string, { index: number; element: TextInputLayout | NumberInputLayout | CheckboxInputLayout }> = {}
 
     private static readonly settingsName = [
         "name",
@@ -55,18 +52,9 @@ export default class SpriteSettings extends OO.ui.PanelLayout {
         const select = new OO.ui.RadioSelectInputWidget({
             classes: ["mjw-sprite-editor--component-sprite-settings--select"],
             options: [
-                {
-                    data: "string",
-                    label: Message.get("editor-settings-type-string"),
-                },
-                {
-                    data: "number",
-                    label: Message.get("editor-settings-type-number"),
-                },
-                {
-                    data: "boolean",
-                    label: Message.get("editor-settings-type-boolean"),
-                },
+                { data: "string", label: Message.get("editor-settings-type-string") },
+                { data: "number", label: Message.get("editor-settings-type-number") },
+                { data: "boolean", label: Message.get("editor-settings-type-boolean") },
             ],
         })
 
@@ -77,13 +65,7 @@ export default class SpriteSettings extends OO.ui.PanelLayout {
         })
 
         // constructor
-        super({
-            expanded: false,
-            padded: false,
-            framed: false,
-            content: [stack, input, select],
-            classes: ["mjw-sprite-editor--component-sprite-settings"],
-        })
+        super({ expanded: false, padded: false, framed: false, content: [stack, input, select], classes: ["mjw-sprite-editor--component-sprite-settings"] })
 
         // arguments
         this.stack = stack
@@ -178,24 +160,15 @@ export default class SpriteSettings extends OO.ui.PanelLayout {
         if (typeof value === "string") {
             var t = this.getTextField(key, value)
             this.stack.addItems([t], index)
-            this.allFields[key] = {
-                index: Object.keys(this.allFields).length,
-                element: t,
-            }
+            this.allFields[key] = { index: Object.keys(this.allFields).length, element: t }
         } else if (typeof value === "number") {
             var n = this.getNumberField(key, value)
             this.stack.addItems([n], index)
-            this.allFields[key] = {
-                index: Object.keys(this.allFields).length,
-                element: n,
-            }
+            this.allFields[key] = { index: Object.keys(this.allFields).length, element: n }
         } else if (typeof value === "boolean") {
             var c = this.getCheckbox(key, value)
             this.stack.addItems([c], index)
-            this.allFields[key] = {
-                index: Object.keys(this.allFields).length,
-                element: c,
-            }
+            this.allFields[key] = { index: Object.keys(this.allFields).length, element: c }
         }
     }
 
@@ -241,13 +214,7 @@ export default class SpriteSettings extends OO.ui.PanelLayout {
         if (typeof value !== "string" && SettingsValue[value]) value = SettingsValue[value].default
         if (typeof value !== "string") value = ""
 
-        let field = new TextInputLayout({
-            label: this.getFieldLabel(key),
-            help: this.getFieldDescription(key),
-            value: value,
-            key: key,
-            sublabel: key,
-        })
+        let field = new TextInputLayout({ label: this.getFieldLabel(key), help: this.getFieldDescription(key), value: value, key: key, sublabel: key })
         field.input.$input.on("change", (e) => {
             let value = field.input.getValue()
             let d = checkSpriteData($this.getSpriteData())
@@ -288,8 +255,7 @@ export default class SpriteSettings extends OO.ui.PanelLayout {
             if (isFinite(v)) {
                 d.settings[key] = v
             } else {
-                if (SettingsValue[key] && typeof SettingsValue[key].default === "number")
-                    d.settings[key] = SettingsValue[key]
+                if (SettingsValue[key] && typeof SettingsValue[key].default === "number") d.settings[key] = SettingsValue[key]
                 else d.settings[key] = 0
             }
             this.updateSpriteData(d)
@@ -302,13 +268,7 @@ export default class SpriteSettings extends OO.ui.PanelLayout {
         if (typeof value !== "boolean" && SettingsValue[value]) value = SettingsValue[value].default
         if (typeof value !== "boolean") value = false
 
-        let field = new CheckboxInputLayout({
-            label: this.getFieldLabel(key),
-            help: this.getFieldDescription(key),
-            value: value,
-            key: key,
-            sublabel: key,
-        })
+        let field = new CheckboxInputLayout({ label: this.getFieldLabel(key), help: this.getFieldDescription(key), value: value, key: key, sublabel: key })
 
         field.input.on("change", (value) => {
             if (typeof value === "boolean") {
@@ -345,15 +305,9 @@ export default class SpriteSettings extends OO.ui.PanelLayout {
             .map((s) => {
                 const m = Message.getObj(`settings-${s}`)
                 if (m.exists()) {
-                    return {
-                        data: s,
-                        label: Message.get("editor-settings-value-options", m.text(), s),
-                    }
+                    return { data: s, label: Message.get("editor-settings-value-options", m.text(), s) }
                 } else {
-                    return {
-                        data: s,
-                        label: s,
-                    }
+                    return { data: s, label: s }
                 }
             })
     }

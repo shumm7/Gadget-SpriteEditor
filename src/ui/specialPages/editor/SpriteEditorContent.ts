@@ -1,12 +1,14 @@
-import { deepClone, getImageinfo, loadJson, loadLua } from "@/utils/io"
+import { loadJson, loadLua } from "@/utils/io"
 import Message, { Constant } from "@/utils/message"
 import { getPageTitle, setSearchParams } from "@/utils/page"
+import Misc from "@/utils/misc"
 import Hooks from "@/utils/hooks"
 import VerticalTabLayout from "@/ui/components/VerticalTabLayout"
 import VerticalTabLayoutItem from "@/ui/components/VerticalTabLayoutItem"
 import SpriteCanvas from "@/ui/specialPages/editor/cogs/SpriteCanvas"
 import SpriteSettings from "@/ui/specialPages/editor/cogs/SpriteSettings"
 import { checkSpriteData } from "@/utils/spriteData"
+import Wiki from "@/utils/wiki"
 
 export default class EditSpritePage extends VerticalTabLayout {
     private $body: JQuery<HTMLElement>
@@ -26,10 +28,7 @@ export default class EditSpritePage extends VerticalTabLayout {
         if (!(title.length && body.length)) setSearchParams("data")
 
         // constructor
-        super({
-            id: "mjw-sprite-editor",
-            classes: ["mjw-sprite-editor", "mjw-sprite-editor--container"],
-        })
+        super({ id: "mjw-sprite-editor", classes: ["mjw-sprite-editor", "mjw-sprite-editor--container"] })
 
         // arguments
         this.$body = body
@@ -41,32 +40,17 @@ export default class EditSpritePage extends VerticalTabLayout {
 
         // page components
         const $this = this
-        this.editorComponentIds = new SpriteCanvas(deepClone(this._image), deepClone(this._data), {
+        this.editorComponentIds = new SpriteCanvas(this._image, Misc.deepClone(this._data), {
             parentClass: $this,
             setParentSpriteData: $this.setSpriteData,
             setParentSpriteImage: $this.setSpriteImage,
         })
-        this.editorComponentSettings = new SpriteSettings(deepClone(this._data), {
-            parentClass: $this,
-            setParentSpriteData: $this.setSpriteData,
-        })
+        this.editorComponentSettings = new SpriteSettings(Misc.deepClone(this._data), { parentClass: $this, setParentSpriteData: $this.setSpriteData })
 
         // pages
-        this.editorContents = {
-            ids: this.pageIds(),
-            sections: this.pageSections(),
-            settings: this.pageSettings(),
-            export: this.pageExport(),
-        }
-        this.addPages(
-            [
-                this.editorContents.ids,
-                this.editorContents.sections,
-                this.editorContents.settings,
-                this.editorContents.export,
-            ],
-            0
-        )
+        this.editorContents = { ids: this.pageIds(), sections: this.pageSections(), settings: this.pageSettings(), export: this.pageExport() }
+        this.addPages([this.editorContents.ids, this.editorContents.sections, this.editorContents.settings, this.editorContents.export], 0)
+        this.selectFirstSelectablePage()
 
         // initialize
         this.$body.empty()
@@ -155,7 +139,7 @@ export default class EditSpritePage extends VerticalTabLayout {
         } else {
             const $this = this
             return new Promise((resolve, reject) => {
-                return getImageinfo(text)
+                return Wiki.imageinfo(text)
                     .then((imageinfo) => {
                         text = imageinfo.url
                         $this._image.src = text
@@ -172,37 +156,28 @@ export default class EditSpritePage extends VerticalTabLayout {
 
     // page components
     private pageIds() {
-        let containerIds = new VerticalTabLayoutItem("ids", {
-            label: Message.get("editor-ids-title"),
-            items: [],
-        })
+        let containerIds = new VerticalTabLayoutItem("ids", { label: Message.get("editor-ids-title"), items: [] })
         containerIds.addItems([this.editorComponentIds])
         return containerIds
     }
     private pageSections() {
-        return new VerticalTabLayoutItem("sections", {
-            label: Message.get("editor-sections-title"),
-        })
+        return new VerticalTabLayoutItem("sections", { label: Message.get("editor-sections-title") })
     }
     private pageSettings() {
-        let containerSettings = new VerticalTabLayoutItem("settings", {
-            label: Message.get("editor-settings-title"),
-        })
+        let containerSettings = new VerticalTabLayoutItem("settings", { label: Message.get("editor-settings-title") })
         containerSettings.addItems([this.editorComponentSettings])
         return containerSettings
     }
     private pageExport() {
-        return new VerticalTabLayoutItem("export", {
-            label: Message.get("editor-export-title"),
-        })
+        return new VerticalTabLayoutItem("export", { label: Message.get("editor-export-title") })
     }
 
     // getter / setter
     setSpriteData(value: Record<string, any>) {
         var data = checkSpriteData(value)
         console.log(data)
-        this.editorComponentIds.setSpriteData(deepClone(data))
-        this.editorComponentSettings.setSpriteData(deepClone(data))
+        this.editorComponentIds.setSpriteData(Misc.deepClone(data))
+        this.editorComponentSettings.setSpriteData(Misc.deepClone(data))
 
         if (this._data.settings.image !== data.settings.image) {
             const $this = this
@@ -212,15 +187,15 @@ export default class EditSpritePage extends VerticalTabLayout {
             })
         }
 
-        this._data = deepClone(data)
+        this._data = Misc.deepClone(data)
     }
     getSpriteData() {
         return this._data
     }
     setSpriteImage(value: HTMLImageElement) {
         console.log(value)
-        this.editorComponentIds.setSpriteImage(deepClone(value))
-        this._image = deepClone(value)
+        this.editorComponentIds.setSpriteImage(value)
+        this._image = value
     }
     getSpriteImage() {
         return this._image

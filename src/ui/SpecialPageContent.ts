@@ -1,5 +1,5 @@
 import Message from "@/utils/message"
-import { pageInfo } from "@/utils/io"
+import Wiki from "@/utils/wiki"
 import { getSearchParams, getPageTitle } from "@/utils/page"
 import IntroductionFormContent from "@/ui/specialPages/introduction/IntroductionFormContent"
 import SpriteEditorContent from "@/ui/specialPages/editor/SpriteEditorContent"
@@ -29,7 +29,7 @@ export default class SpecialPageContent {
         const $this = this
 
         if (target && target.length > 0) {
-            pageInfo(target).then((page) => {
+            Wiki.pageInfo(target).then((page) => {
                 const pageid = page.pageid === undefined ? -1 : page.pageid
                 const exist = pageid >= 0
                 const nsId = page.ns || 0
@@ -44,12 +44,7 @@ export default class SpecialPageContent {
                             $this.showEditor(target, exist)
                             return
                         } else {
-                            error = Message.getObj(
-                                "selector-contentmodel-error",
-                                target,
-                                contentModel || "Unknown",
-                                "json"
-                            ).parseDom()
+                            error = Message.getObj("selector-contentmodel-error", target, contentModel || "Unknown", "json").parseDom()
                         }
                     } else {
                         if (ext && ext.length > 0) {
@@ -63,12 +58,7 @@ export default class SpecialPageContent {
                         $this.showEditor(target, exist)
                         return
                     } else {
-                        error = Message.getObj(
-                            "selector-contentmodel-error",
-                            target,
-                            contentModel || "Unknown",
-                            "Scribunto"
-                        ).parseDom()
+                        error = Message.getObj("selector-contentmodel-error", target, contentModel || "Unknown", "Scribunto").parseDom()
                     }
                 } else {
                     error = Message.getObj("selector-namespace-error", target).parseDom()

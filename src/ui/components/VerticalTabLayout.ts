@@ -3,9 +3,7 @@ import VerticalTabLayoutItem from "./VerticalTabLayoutItem"
 interface VerticalTabLayoutConfig {
     framed?: boolean
     menuPosition?: OO.ui.MenuLayout.Position
-    items?:
-        | (OO.ui.PageLayout | VerticalTabLayoutItem)
-        | (OO.ui.PageLayout | VerticalTabLayoutItem)[]
+    items?: (OO.ui.PageLayout | VerticalTabLayoutItem) | (OO.ui.PageLayout | VerticalTabLayoutItem)[]
     id?: string
     classes?: string[]
 }
@@ -61,12 +59,7 @@ class VerticalTabLayout extends OO.ui.PanelLayout {
             return this.booklet.getPage(name)
         }
     }
-    addPages(
-        pages:
-            | (OO.ui.PageLayout | VerticalTabLayoutItem)
-            | (OO.ui.PageLayout | VerticalTabLayoutItem)[],
-        index: number
-    ) {
+    addPages(pages: (OO.ui.PageLayout | VerticalTabLayoutItem) | (OO.ui.PageLayout | VerticalTabLayoutItem)[], index: number) {
         if (Array.isArray(pages)) {
             this.booklet.addPages(
                 pages.map((p) => {
@@ -88,11 +81,7 @@ class VerticalTabLayout extends OO.ui.PanelLayout {
     clearPages() {
         this.booklet.clearPages()
     }
-    removePages(
-        pages:
-            | (OO.ui.PageLayout | VerticalTabLayoutItem)
-            | (OO.ui.PageLayout | VerticalTabLayoutItem)[]
-    ) {
+    removePages(pages: (OO.ui.PageLayout | VerticalTabLayoutItem) | (OO.ui.PageLayout | VerticalTabLayoutItem)[]) {
         if (Array.isArray(pages)) {
             this.booklet.removePages(
                 pages.map((p) => {
@@ -109,6 +98,10 @@ class VerticalTabLayout extends OO.ui.PanelLayout {
                 this.booklet.removePages([pages])
             }
         }
+    }
+
+    selectFirstSelectablePage() {
+        this.booklet.selectFirstSelectablePage()
     }
 }
 
